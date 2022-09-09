@@ -1,0 +1,8 @@
+selenium
+flask
+urllib3
+requests
+pytube
+pandas
+numpy
+
