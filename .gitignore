@@ -4,4 +4,4 @@ lib/
 Scripts/
 test/
 chatgpt/
-
+**/__pycache__/
