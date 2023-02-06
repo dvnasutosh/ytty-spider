@@ -34,9 +34,9 @@ class webDriver:
         Args:
             link (str):A valid full link of the URL you want to scrap
         """
-        self.driver(link)
+        self.driver.get(link)
     
-    def getCookies(self,raw:bool=False)->dict|list[dict]:
+    def getCookies(self,**kwargs)->dict|list[dict]:
         """returns the cookie captured from the current website the current instance of webdriver is in
 
         Args:
@@ -45,8 +45,14 @@ class webDriver:
         Returns:
             dict|list[dict]: list of cookies or a cookie name value pair in form of dictionary
         """
+        
+        # Validating for passed args
+        if 'iRaw' not in kwargs.keys():
+            raise SyntaxError("iRaw Value not given")
+        elif kwargs.__len__()>1:
+            raise SyntaxError("Extra Data given")
         ytcookie=dict()
-        if not raw:    
+        if not kwargs['iRaw']:    
             for i in self.driver.get_cookies():
                 ytcookie[i['name']]=i['value']
         else:

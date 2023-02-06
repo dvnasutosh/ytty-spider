@@ -5,3 +5,5 @@ Scripts/
 test/
 chatgpt/
 **/__pycache__/
+share/
+.vscode/
