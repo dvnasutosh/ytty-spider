@@ -10,3 +10,4 @@ class fetchType(Enum):
     VIDEO = 1
     GENERAL = 2
     USER=3
+    

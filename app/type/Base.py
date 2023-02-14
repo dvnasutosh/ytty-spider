@@ -1,4 +1,6 @@
+# Imports
 from pydantic import BaseModel
+import typing
 
 class DynamicMembers(BaseModel):
     """
@@ -19,6 +21,7 @@ class DynamicMembers(BaseModel):
         for key, value in self.__fields__.items():
             self.data[key] = None
 
+        
     def __setitem__(self, key, value):
         """
         Set the value of a member data item.
@@ -28,9 +31,15 @@ class DynamicMembers(BaseModel):
         assigned is not of the correct type.
         """
         if key in self.__fields__:
-            if isinstance(value, self.__fields__[key].type_):
+            field_type = self.__fields__[key].type_
+            if isinstance(field_type, typing._SpecialForm):
+                if isinstance(value, field_type.__args__):
+                    self.data[key] = value
+                else:
+                    raise TypeError(f"Expected value of type {field_type.__args__}, got {type(value)}")
+            elif isinstance(value, field_type) or isinstance(value, typing._SpecialForm):
                 self.data[key] = value
             else:
-                raise TypeError(f"Expected value of type {self.__fields__[key].type_}, got {type(value)}")
+                raise TypeError(f"Expected value of type {field_type}, got {type(value)}")
         else:
             raise KeyError(f"{key} is not a valid member")
