@@ -13,7 +13,7 @@ class DynamicMembers(BaseModel):
     def __init__(self):
         """
         Initialize an instance of the `DynamicMembers` class.
-
+        
         This method creates an empty dictionary `data` and sets the value of each key in `data` to `None` based on the field
         names and types defined in the `__fields__` attribute of the class.
         """

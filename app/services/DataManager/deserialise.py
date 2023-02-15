@@ -1,5 +1,6 @@
 # from app.type.Video import Video
 
+
 def deserialise_videoData(raw:dict) -> dict:
     # videoData=Video()
     videoData=dict()
@@ -20,4 +21,17 @@ def deserialise_videoData(raw:dict) -> dict:
     videoData['isPrivate']=True if raw['videoDetails']['isPrivate'] else False
     videoData['isLiveContent']=True if raw['videoDetails']['isLiveContent'] else False
     return videoData
+
+def deserialise_interactionData(raw:dict):
+    interactions=dict()
+    content=raw['contents']['twoColumnWatchNextResults']['results']['results']['contents']
+    # getting likes
+    filteredLikeSection=content[0]['videoPrimaryInfoRenderer']['videoActions']['menuRenderer']['topLevelButtons'][0]['segmentedLikeDislikeButtonRenderer']['likeButton']['toggleButtonRenderer']
+    # filtering like subtext
+    likeText=filteredLikeSection['defaultText']['accessibility']['accessibilityData']['label']
+    interactions['likes']=int(''.join([i for i in likeText if str.isdigit(i)]))    #Coz f* regex
+    interactions['comments_continuation']=content[3]['itemSectionRenderer']['contents'][0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
+    
+    return interactions
+    
     

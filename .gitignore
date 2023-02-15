@@ -7,3 +7,4 @@ chatgpt/
 **/__pycache__/
 share/
 .vscode/
+*/*.json

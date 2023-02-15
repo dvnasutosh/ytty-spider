@@ -1,14 +1,14 @@
 import json
 import requests
 
-from app.services.DataManager.deserialise import deserialise_videoData
+from app.services.DataManager.deserialise import deserialise_videoData,deserialise_interactionData
 
+from app.common.urls import url
+from app.common.payload import generalPayloadWEB
+  
+    
 
-
-
-
-
-def get_videoData2(
+def get_videoData(
     videoId:str,
     ):
     url = "https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8&prettyPrint=false"
@@ -29,10 +29,16 @@ def get_videoData2(
     raw_data=json.loads(response.text)
     return deserialise_videoData(raw_data)
 
-def getVdoLikes(
+def get_videoInteractions(
     videoId:str
-)
-y=get_videoData2("BddP6PYo2gs")
-print(json.dumps(y,indent=2))
+)->str:
+    response =requests.request('POST',url['next'],data=json.dumps(generalPayloadWEB(videoId)))
 
+    
+    return deserialise_interactionData(json.loads(response.text))
 
+    
+
+data=get_videoInteractions("BddP6PYo2gs")
+
+print(data)
