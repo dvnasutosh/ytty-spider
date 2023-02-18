@@ -1,45 +1,77 @@
-# Imports
-from pydantic import BaseModel
-import typing
+from typing import Any
 
-class DynamicMembers(BaseModel):
+class Dictionary:
     """
-    A class that allows creation and assignment of member data using square bracket notation.
-
-    This class inherits from `pydantic.BaseModel` and automatically generates the `__fields__` attribute based on the
-    field annotations in the class definition. The class also provides the ability to assign values to the members using
-    square bracket notation, and it raises a `KeyError` if you try to assign a value to a member that doesn't exist.
+    A class that can be used to create a dictionary-like object with arbitrary key-value pairs.
     """
-    def __init__(self):
+    def __init__(self, **kwargs) -> None:
         """
-        Initialize an instance of the `DynamicMembers` class.
-        
-        This method creates an empty dictionary `data` and sets the value of each key in `data` to `None` based on the field
-        names and types defined in the `__fields__` attribute of the class.
+        Initializes the object with the given keyword arguments.
+        If no arguments are given, the attributes are set to `None`.
         """
-        self.data = {}
-        for key, value in self.__fields__.items():
-            self.data[key] = None
+        # Iterate over the class annotations and set the attributes
+        # based on the given keyword arguments
+        for i, j in self.__annotations__.items() if not kwargs else kwargs.items():
+            setattr(self, i, j if kwargs else None)
 
-        
-    def __setitem__(self, key, value):
+    def __repr__(self) -> str:
         """
-        Set the value of a member data item.
+        Returns a string representation of the object's dictionary.
+        """
+        return str(self.__dict__)
 
-        This method allows you to assign a value to a member using square bracket notation, and it raises a `KeyError` if
-        you try to assign a value to a member that doesn't exist. The method also raises a `TypeError` if the value being
-        assigned is not of the correct type.
+    def __setitem__(self, __name, __value) -> None:
         """
-        if key in self.__fields__:
-            field_type = self.__fields__[key].type_
-            if isinstance(field_type, typing._SpecialForm):
-                if isinstance(value, field_type.__args__):
-                    self.data[key] = value
+        Provides indexing and assignment functionality to the object.
+        """
+        setattr(self, __name, __value)
+
+    def __getitem__(self, __name) -> Any:
+        """
+        Provides indexing and retrieval functionality to the object.
+        """
+        return self.__dict__[__name]
+
+class StrictDictionary(Dictionary):
+    """
+    A subclass of `Dictionary` that enforces strict typing of the values based on the annotations of the class attributes.
+    """
+    def __init__(self, **kwargs) -> None:
+        """
+        Initializes the object with the given keyword arguments.
+        If no arguments are given, the attributes are set to the default values obtained by calling the corresponding attribute functions.
+        """
+        if not kwargs:
+            # Iterate over the class annotations and set the attributes
+            # based on the default values obtained by calling the corresponding attribute functions
+            for i, j in self.__annotations__.items():
+                # Check if the attribute type is a function that can be called
+                if type(j) in (type(lambda: ''), type(str.count), type(any)):
+                    raise ValueError(f"can't assign {type(j)} data. Illegal Value")
                 else:
-                    raise TypeError(f"Expected value of type {field_type.__args__}, got {type(value)}")
-            elif isinstance(value, field_type) or isinstance(value, typing._SpecialForm):
-                self.data[key] = value
-            else:
-                raise TypeError(f"Expected value of type {field_type}, got {type(value)}")
+                    super().__setitem__(i, j())
         else:
-            raise KeyError(f"{key} is not a valid member")
+            # Call the superclass constructor to set the attributes based on the given keyword arguments
+            super().__init__(**kwargs)
+
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        """
+        Overrides the superclass `__setattr__` method to perform type checking before assignment.
+        If the value to be assigned is not of the expected type, a `TypeError` is raised.
+        """
+        if not type(__value) == self.__annotations__[__name]:
+            raise TypeError(
+                f'{__name} key has a value {__value} which is of type {type(__value)}. {self.__annotations__[__name]} expected.')
+        else:
+            return super().__setattr__(__name, __value)
+
+    def __setitem__(self, __name, __value) -> None:
+        """
+        Overrides the superclass `__setitem__` method to perform type checking before assignment.
+        If the value to be assigned is not of the expected type, a `TypeError` is raised.
+        """
+        if not type(__value) == self.__annotations__[__name]:
+            raise TypeError(
+                f'{__name} key has a value {__value} which is of type {type(__value)}. {self.__annotations__[__name]} expected.')
+        else:
+            super().__setitem__(__name, __value)
