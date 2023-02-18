@@ -46,7 +46,7 @@ class StrictDictionary(Dictionary):
             # based on the default values obtained by calling the corresponding attribute functions
             for i, j in self.__annotations__.items():
                 # Check if the attribute type is a function that can be called
-                if type(j) in (type(lambda: ''), type(str.count), type(any)):
+                if type(j) != type:
                     raise ValueError(f"can't assign {type(j)} data. Illegal Value")
                 else:
                     super().__setitem__(i, j())
