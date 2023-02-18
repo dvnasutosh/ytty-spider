@@ -1,8 +1,7 @@
-from app.type.Base import DynamicMembers
+from app.type.Base import StrictDictionary
 from typing import List, Dict
-from pydantic import BaseModel
 
-class Video(DynamicMembers):
+class Video(StrictDictionary):
     videoId: str
     title: str
     author: str
@@ -17,17 +16,36 @@ class Video(DynamicMembers):
     isPrivate: bool
     isLiveContent: bool
     data: dict
-video = Video()
-video['videoId'] = '123456'
-video['title'] = 'My Video Title'
-video['author'] = 'Author Name'
-video['lengthSeconds'] = '600'
-video['keywords'] = ['video', 'content', 'entertainment']
-video['channelId'] = 'ABC123'
-video['shortDescription'] = 'A short description of the video'
-video['video'] = [{'url': 'http://video.com/video1', 'format': 'mp4'}, {'url': 'http://video.com/video2', 'format': 'webm'}]
-video['isOnwerViewing'] = True
-video['isCrawlable'] = False
-video['allowRating'] = True
-video['isPrivate'] = False
-video['isLiveContent'] = False
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    # Test purpose sample Data
+# video = Video()
+# video['videoId'] = '123456'
+# video['title'] = 'My Video Title'
+# video['author'] = 'Author Name'
+# video['lengthSeconds'] = '600'
+# video['keywords'] = ['video', 'content', 'entertainment']
+# video['channelId'] = 'ABC123'
+# video['shortDescription'] = 'A short description of the video'
+# video['video'] = [{'url': 'http://video.com/video1', 'format': 'mp4'}, {'url': 'http://video.com/video2', 'format': 'webm'}]
+# video['isOnwerViewing'] = True
+# video['isCrawlable'] = False
+# video['allowRating'] = True
+# video['isPrivate'] = False
+# video['isLiveContent'] = False
+# print(video)
