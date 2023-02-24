@@ -1,7 +1,7 @@
 import requests
-class Auth:
+class Authentication:
     
-    def __init__(self) -> None:
+    def __init__(self,data=None) -> None:
         
         self.__ytinit=requests.get('https://www.youtube.com')
         self.cookie=dict(self.__ytinit.cookies)

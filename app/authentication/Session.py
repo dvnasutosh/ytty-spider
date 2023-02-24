@@ -11,3 +11,4 @@ class Session:
         input = timestamp  + rand
         return str(uuid.uuid5(uuid.NAMESPACE_DNS, input))
 
+    

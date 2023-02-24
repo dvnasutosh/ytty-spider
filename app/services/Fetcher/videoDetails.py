@@ -38,7 +38,6 @@ def get_videoInteractions(
     return deserialise_interactionData(json.loads(response.text))
 
     
-
 data=get_videoInteractions("BddP6PYo2gs")
 
 print(data)
