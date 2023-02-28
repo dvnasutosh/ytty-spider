@@ -75,9 +75,9 @@ class yt_requests:
         cls.Header=Header()
     def Fetch(self):
         return requests.Request(url=self.URL,data=self.PAYLOAD,headers=self.Header)
-    
 
-class Endpoint_Base:
+
+class endpoint_base:
     def __init__(self) -> None:
         self.PF:PF=PF.WEB
         self.gl:PF='In'
