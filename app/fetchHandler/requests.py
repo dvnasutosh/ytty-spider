@@ -1,11 +1,13 @@
 from urllib.parse import urlencode
 import requests
-from typing import Any
 import json
 from enum import Enum
+from app.type.Base import StrictDictionary
+
 class ResourceName(Enum):
     API:str=r'https://www.youtube.com/'
     # SHint:str=r'https://suggestqueries-clients6.youtube.com/'
+
 class Route:
     route_path=r'youtubei/v1/'
     # SHint=r'complete/'    TODO: Adding a separate pathway for search hinting
@@ -13,6 +15,7 @@ class Route:
         self.__path=self.route_path+getattr(self.Endpoint,ROUTE)
     def __repr__(self) -> str:
         return self.__path
+
 class queryString:
     basic={'key':'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'}
     # searchQuery=dict({
@@ -47,19 +50,29 @@ class PF:
         }
     }
 
-
 class Payload:
     def __init__(self,Uparam:dict,PF:PF=PF.WEB,geoLocation='in') -> None:
         self._data={'context':PF}
         self._data['context']['gl']=geoLocation
         for i, j in Uparam:
             self._data[i]=j
+    
+    
     def __repr__(self) -> str:
         return json.dumps(self._data)
     def __call__(self) -> dict:
         self._data
     
+    def __setitem__(self,__name,__value):
+        self._data[__name]=__value
+    def __getitem__(self,__name):
+        return self.__data[__name]
 
+
+class OPTIONS(StrictDictionary):
+    platform:PF
+    geolocation='in'
+    
 class yt_requests:
     def __init__(self):
         self.URL:URL
@@ -67,15 +80,16 @@ class yt_requests:
         self.Header:Header
 
     def __init_subclass__(cls) -> None:
-        if not issubclass(cls,Endpoint_Base):
+        if not issubclass(cls,endpoint_base):
             raise TypeError('doesn\'t inherit Endpoint_Base')
         
         cls.URL=URL(cls.__name__)
         cls.PAYLOAD=Payload(Uparam=cls(),PF=cls.PF)
         cls.Header=Header()
     def Fetch(self):
-        return requests.Request(url=self.URL,data=self.PAYLOAD,headers=self.Header)
-
+        return requests.Request(url=self.URL,data=self.PAYLOAD,headers=self.Header if self.Header else '')
+    def setUparam(self,**param):
+        self.PAYLOAD
 
 class endpoint_base:
     def __init__(self) -> None:
@@ -87,4 +101,6 @@ class endpoint_base:
         return json.dumps(self.__dict__)
     def __call__(self)->dict:
         return self.__dict__
-      
+
+
+
