@@ -13,9 +13,15 @@ class Dictionary:
         """
         # Iterate over the class annotations and set the attributes
         # based on the given keyword arguments
-        for i, j in self.__annotations__.items() if not kwargs else kwargs.items():
-            setattr(self, i, j if kwargs else None)
-
+        for i,j in self.__annotations__.items():
+            try:
+                getattr(self,i)
+            except AttributeError:
+                setattr(self,i,None)
+        for i, j in self.__annotations__.items() if not kwargs else kwargs.items(): # k if k=.. else annot
+            setattr(self, i, j)
+    def __init_subclass__(cls) -> None:
+        pass
     def __repr__(self) -> str:
         """
         Returns a string representation of the object's dictionary.
