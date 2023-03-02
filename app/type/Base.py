@@ -20,14 +20,15 @@ class Dictionary:
                 setattr(self,i,None)
         for i, j in self.__annotations__.items() if not kwargs else kwargs.items(): # k if k=.. else annot
             setattr(self, i, j)
-    def __init_subclass__(cls) -> None:
-        pass
+
     def __repr__(self) -> str:
         """
         Returns a string representation of the object's dictionary.
         """
         return str(self.__dict__)
-
+    def __call__(self) -> dict:
+        return 'hello'
+    
     def __setitem__(self, __name, __value) -> None:
         """
         Provides indexing and assignment functionality to the object.
@@ -53,11 +54,14 @@ class StrictDictionary(Dictionary):
             super().__setitem__(i,j)
         if kwargs:
             # if kwargs exists adding all the given values using super class
+            
             for i,j in kwargs.items():
                 
                 #SECTION: validation logic
                 expected_type=self.__annotations__[i] if not get_origin(self.__annotations__[i]) else get_origin(self.__annotations__[i])
-                if not type(j) == expected_type:
+                
+                
+                if not isinstance(j,expected_type):
                     raise TypeError(
                         f'{i} key has a value {j} which is of type {type(j)}. {expected_type} expected.')
                 #!SECTION
@@ -66,15 +70,17 @@ class StrictDictionary(Dictionary):
                 
     def __init_subclass__(cls) -> None:
         cls.idata=dict()
+        if not cls.__annotations__:
+            raise AttributeError('You need to add type hintings for now. Will be solved in future versions')
         for i, j in cls.__annotations__.items():
             if i in cls.__dict__.keys():
                 
                 #validation logic
                 # Checking if expected_type is of Typing Class than converting it into it's base class
-                expected_type=j if not get_origin(j) else get_origin(j)
                 
+                expected_type=j if not get_origin(j) else get_origin(j)        
                 # Raise error if the given value is not of the expected type
-                if not type(cls.__dict__[i]) == expected_type:
+                if not isinstance(cls.__dict__[i],expected_type):
                     raise TypeError(
                         f'{i} key has a value {cls.__dict__[i]} which is of type {type(cls.__dict__[i])}. {expected_type} expected.')
                 
@@ -101,7 +107,7 @@ class StrictDictionary(Dictionary):
             expected_type=get_origin(expected_type)
         
         # Raise error if the given value is not of the expected type
-        if not type(__value) == expected_type:
+        if not isinstance(__value,expected_type):
             raise TypeError(
                 f'{__name} key has a value {__value} which is of type {type(__value)}. {expected_type} expected.')
         
@@ -119,7 +125,7 @@ class StrictDictionary(Dictionary):
         if get_origin(expected_type):
             expected_type=expected_type.__origin__
 
-        if not type(__value) == expected_type:
+        if not isinstance(__value,expected_type):
             raise TypeError(
                 f'{__name} key has a value {__value} which is of type {type(__value)}. {self.__annotations__[__name]} expected.')
         else:
@@ -135,7 +141,7 @@ class StrictDictionary(Dictionary):
         if get_origin(expected_type):
             expected_type=expected_type.__origin__
 
-        if not type(__value) == expected_type:
+        if not isinstance(__value,expected_type):
             raise TypeError(
                 f'{__name} key has a value {__value} which is of type {type(__value)}. {self.__annotations__[__name]} expected.')
         else:
