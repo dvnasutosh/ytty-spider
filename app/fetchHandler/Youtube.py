@@ -4,25 +4,12 @@ import json
 
 class Loadout:
     pass
+
 class Youtube:
     # This Class is the parent class that will hold all internal data e.g.
-    class param:
-        def __str__(self) -> str:
-            return self.__name__
-        def __repr__(self)->str:
-            return json.dumps(self.__dict__)
-        def __call__(self)->dict:
-            return self.__dict__
-         
-    class next(param):
-        def __init__(self, videoId: str = '', continuation: str = '') -> None:
-            
-            if not videoId and not continuation:
-                raise ValueError('Either video_id or continuation must be provided.')
-            self.videoId=videoId
-            self.continuation=continuation
+    pass
 
-    
+
     
 class PF(Enum):
         WEB = {
@@ -41,4 +28,4 @@ class PF(Enum):
 
 
 class VideoManager:
-    
+    pass

@@ -26,8 +26,9 @@ class Dictionary:
         Returns a string representation of the object's dictionary.
         """
         return str(self.__dict__)
+    
     def __call__(self) -> dict:
-        return 'hello'
+        return self.__dict__
     
     def __setitem__(self, __name, __value) -> None:
         """
@@ -71,7 +72,7 @@ class StrictDictionary(Dictionary):
     def __init_subclass__(cls) -> None:
         cls.idata=dict()
         if not cls.__annotations__:
-            raise AttributeError('You need to add type hintings for now. Will be solved in future versions')
+            raise AttributeError('You need to add type hintings for now. Will be solved in future versions. partial annotation is accepted but is not allowed as a part of the data')
         for i, j in cls.__annotations__.items():
             if i in cls.__dict__.keys():
                 
