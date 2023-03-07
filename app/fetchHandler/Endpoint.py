@@ -18,7 +18,7 @@ class next(yt_requests,endpoint_base):
 
 class player(yt_requests,endpoint_base):
     
-    def __call__(self,videoId:str=''):
+    def __call__(self,videoId:str):
 
         self.PAYLOAD.setUParam(videoId=videoId)
         
@@ -27,4 +27,35 @@ class player(yt_requests,endpoint_base):
         return self.raw
 
 
+class search(yt_requests,endpoint_base):
+    
+    def __call__(self,query:str):
 
+        self.PAYLOAD.setUParam(query=query)
+        
+
+class browse(yt_requests,endpoint_base):
+    
+    def __call__(self,browseId:str,param:str):
+
+        self.PAYLOAD.setUParam(browseId=browseId,param=param)
+
+        self.raw=self.Fetch()
+        return self.raw
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #TODO: Add all other endpoints
+    #TODO: Restructure the directory structure
