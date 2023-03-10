@@ -103,7 +103,7 @@ class StrictDictionary(Dictionary):
         """
         expected_type=self.__annotations__[__name] 
         
-            # Checking if expected_type is of Typing Class than converting it into it's base class
+        # Checking if expected_type is of Typing Class than converting it into it's base class
         if get_origin(expected_type):
             expected_type=get_origin(expected_type)
         
