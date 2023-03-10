@@ -85,7 +85,7 @@ class yt_requests:
 
 
     def __init_subclass__(cls) -> None:
-        print('Entered initsub')
+
         if not issubclass(cls,endpoint_base):
             raise TypeError('doesn\'t inherit Endpoint_Base')
         cls.URL = URL(cls.__name__) 
@@ -93,7 +93,7 @@ class yt_requests:
 
     def Fetch(self)-> requests.Response:
                
-        return requests.request(method='POST',url=self.URL,data=json.dumps(self.PAYLOAD),headers=self.HEADER)
+        return requests.post(url=self.URL,data=json.dumps(self.PAYLOAD),headers=self.HEADER)
     
 class endpoint_base:
     def __init__(self) -> None:

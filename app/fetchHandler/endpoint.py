@@ -1,5 +1,5 @@
 
-from app.fetchHandler.Requests import endpoint_base,yt_requests,CONTEXT
+from app.fetchHandler.requests import endpoint_base,yt_requests,CONTEXT
 from app.authentication.auth import Authentication
 
 import json
@@ -30,32 +30,13 @@ class player(yt_requests,endpoint_base):
 class search(yt_requests,endpoint_base):
     
     def __call__(self,query:str):
-
         self.PAYLOAD.setUParam(query=query)
         
 
 class browse(yt_requests,endpoint_base):
     
     def __call__(self,browseId:str,param:str):
-
         self.PAYLOAD.setUParam(browseId=browseId,param=param)
 
         self.raw=self.Fetch()
         return self.raw
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #TODO: Add all other endpoints
-    #TODO: Restructure the directory structure
