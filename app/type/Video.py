@@ -1,31 +1,37 @@
 from app.type.Base import StrictDictionary
 from typing import List, Dict
 
+class thumbnail(StrictDictionary()):
+    url:str
+    width:int
+    height:int
+
+class keywordList(list):
+    def __init__(self,*args):
+        if not all([isinstance(i, str) for i in args]):
+            raise ValueError('keywordList will have "str" type items only')
+        super().__init__(*args)
+
+
 class Video(StrictDictionary):
     videoId: str
     title: str
     author: str
     lengthSeconds: str
-    keywords: List[str]
+    keywords: keywordList
     channelId: str
     shortDescription: str
     viewCount:int
-    thumbnail:dict
+    thumbnail:thumbnail
     isOwnerViewing: bool
     isCrawlable: bool
     allowRatings: bool
     isPrivate: bool
     isLiveContent: bool
-    
-    video: List[Dict]
-    
-    
-    
-    
-    
-    
-    
-    
+    isFamilySafe:bool
+
+
+
     
     
     
