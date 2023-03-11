@@ -69,7 +69,17 @@ class Payload(dict):
         for i,j in client.items():
             self['context']['client'][i]=j
     
+class endpoint_base:
+    def __init__(self) -> None:
+        pass
+    def __str__(self) -> str:
+        return self.__name__
     
+    def __repr__(self)->str:
+        return json.dumps(self.__dict__)
+
+
+
 class yt_requests:
     def __init__(self,auth:Authentication=Authentication(),client:CONTEXT=CONTEXT()):
     
@@ -78,7 +88,11 @@ class yt_requests:
         self.HEADER=Header(auth)
         
         self.raw:requests.Response
-         
+        
+        #Checking if the client data provided is CONTEXT or not
+        if not issubclass(client, CONTEXT):
+            raise TypeError(f"client is not of type CONTEXT.")
+
         # Setting client if context given
         self.PAYLOAD.setClient(**(client()))
         
@@ -91,16 +105,14 @@ class yt_requests:
         cls.URL = URL(cls.__name__) 
         cls.PAYLOAD = Payload(client=CONTEXT())
 
+    def UpdateContext(self, client:CONTEXT):
+        if not issubclass(client, CONTEXT):
+            raise TypeError(f"client is not of type CONTEXT.")
+        
+        # Setting client if context given
+        self.PAYLOAD.setClient(**(client()))
+    
     def Fetch(self)-> requests.Response:
-               
         return requests.post(url=self.URL,data=json.dumps(self.PAYLOAD),headers=self.HEADER)
     
-class endpoint_base:
-    def __init__(self) -> None:
-        pass
-    def __str__(self) -> str:
-        return self.__name__
     
-    def __repr__(self)->str:
-        return json.dumps(self.__dict__)
-
