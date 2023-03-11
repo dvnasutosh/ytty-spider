@@ -23,7 +23,7 @@ class queryString:
     # searchQuery=dict({
     #     'client':'youtube',
     #     'q':None})
-    
+
 class URL:
     def __init__(self,Endpoint:str) -> None:
          self.__data= ResourceName.API.value+str(Route(Endpoint))+"?"+urlencode(queryString.basic)
@@ -37,14 +37,22 @@ class Header(dict):
    
 class PF(Enum):
     EMBED={
-    
         "clientName": "WEB_EMBEDDED_PLAYER",
         "clientVersion": "1.20230131.01.00",
-        }
+    }
     WEB={
         
         "clientName": "WEB",
         "clientVersion": "2.20230213.01.00"
+    }
+    ANROID={
+            "clientName": "ANDROID",
+            "clientVersion": "17.10.35",
+            "androidSdkVersion": 30
+    }
+    TV={
+        "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+        "clientVersion": "2.0"
     }
 
 class CONTEXT(StrictDictionary):
