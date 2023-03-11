@@ -1,16 +1,16 @@
 from app.type.Base import StrictDictionary
-from typing import List, Dict
+from typing import List, Dict, override
 
-class thumbnail(StrictDictionary()):
+class thumbnail(StrictDictionary):
     url:str
     width:int
     height:int
 
 class keywordList(list):
-    def __init__(self,*args):
+    def __init__(self,args:list=list()):
         if not all([isinstance(i, str) for i in args]):
-            raise ValueError('keywordList will have "str" type items only')
-        super().__init__(*args)
+            raise ValueError('keywordList will need to have "str" type items only')
+        super().__init__(args)
 
 
 class Video(StrictDictionary):

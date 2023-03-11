@@ -13,7 +13,7 @@ class Deserialise:
         videoData['title']=raw['videoDetails']['title']
         videoData['author']=raw['videoDetails']['author']
         videoData['lengthSeconds']=raw['videoDetails']['lengthSeconds']
-        videoData['keywords']=keywordList(iterable)(raw['videoDetails']['keywords'])
+        videoData['keywords']=keywordList(args=raw['videoDetails']['keywords'])
         videoData['channelId']=raw['videoDetails']['channelId']
         videoData['shortDescription']=raw['videoDetails']['shortDescription']
         videoData['viewCount']=int(raw['videoDetails']['viewCount'])
@@ -24,8 +24,6 @@ class Deserialise:
         videoData['allowRatings']=True if raw['videoDetails']['allowRatings'] else False
         videoData['isPrivate']=True if raw['videoDetails']['isPrivate'] else False
         videoData['isLiveContent']=True if raw['videoDetails']['isLiveContent'] else False
-        if 'microformat' in raw.keys():
-            videoData['country']=raw['microformat']['playerMicroformatRenderer']['availableCountries']
         return videoData
 
     @staticmethod
