@@ -90,7 +90,7 @@ class yt_requests:
         self.raw:requests.Response
         
         #Checking if the client data provided is CONTEXT or not
-        if not issubclass(client, CONTEXT):
+        if not isinstance(client, CONTEXT):
             raise TypeError(f"client is not of type CONTEXT.")
 
         # Setting client if context given
@@ -106,7 +106,7 @@ class yt_requests:
         cls.PAYLOAD = Payload(client=CONTEXT())
 
     def UpdateContext(self, client:CONTEXT):
-        if not issubclass(client, CONTEXT):
+        if not isinstance(client, CONTEXT):
             raise TypeError(f"client is not of type CONTEXT.")
         
         # Setting client if context given

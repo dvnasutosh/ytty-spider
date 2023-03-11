@@ -4,7 +4,7 @@ from app.type.Interactions import Interactions
 
 
 class Deserialise:
-    @staticmethod(f)
+    @staticmethod
     def videoData(raw:dict) -> dict:
         # videoData=Video()
         videoData=Video()
@@ -16,7 +16,7 @@ class Deserialise:
         videoData['keywords']=raw['videoDetails']['keywords']
         videoData['channelId']=raw['videoDetails']['channelId']
         videoData['shortDescription']=raw['videoDetails']['shortDescription']
-        videoData['viewCount']=raw['videoDetails']['viewCount']
+        videoData['viewCount']=int(raw['videoDetails']['viewCount'])
         videoData['thumbnail']=raw['videoDetails']['thumbnail']['thumbnails'][-1]
         
         videoData['isOwnerViewing']=True if raw['videoDetails']['isOwnerViewing']=='true' else False
@@ -26,7 +26,7 @@ class Deserialise:
         videoData['isLiveContent']=True if raw['videoDetails']['isLiveContent'] else False
         return videoData
 
-    @staticmethod(f)
+    @staticmethod
     def interactionData(raw:dict):
         interactions=Interactions()
         content=raw['contents']['twoColumnWatchNextResults']['results']['results']['contents']

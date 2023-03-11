@@ -1,4 +1,4 @@
-from typing import Any,_SpecialGenericAlias,get_origin
+from typing import Any,get_origin
 import typing
 
 

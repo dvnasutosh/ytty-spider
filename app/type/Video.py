@@ -9,13 +9,15 @@ class Video(StrictDictionary):
     keywords: List[str]
     channelId: str
     shortDescription: str
-    video: List[Dict]
-    isOnwerViewing: bool
+    viewCount:int
+    thumbnail:dict
+    isOwnerViewing: bool
     isCrawlable: bool
-    allowRating: bool
+    allowRatings: bool
     isPrivate: bool
     isLiveContent: bool
-    data: dict
+    
+    video: List[Dict]
     
     
     
