@@ -1,6 +1,6 @@
 from app.type.Base import StrictDictionary
 
-class Interactions(StrictDictionary()):
+class Interactions(StrictDictionary):
     """stores all interactions relative to a youtube video
 
     Args:
@@ -8,3 +8,4 @@ class Interactions(StrictDictionary()):
     """
     likes:int
     comments_continuation:str
+
