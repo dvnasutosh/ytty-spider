@@ -1,8 +1,9 @@
 from typing import Any,get_origin
 import typing
+import json
 
 
-class Dictionary:
+class Dictionary(dict):
     """
     A class that can be used to create a dictionary-like object with arbitrary key-value pairs.
     """
@@ -21,15 +22,23 @@ class Dictionary:
         for i, j in self.__annotations__.items() if not kwargs else kwargs.items(): # k if k=.. else annot
             setattr(self, i, j)
 
+
     def __repr__(self) -> str:
         """
         Returns a string representation of the object's dictionary.
         """
+        
         return str(self.__dict__)
     
-    def __call__(self) -> dict:
-        return self.__dict__
+    def __call__(self,raw:bool=False) -> dict:
+        return eval(str(self.__dict__)) if raw else self.__dict__
     
+    def __str__(self):
+        return json.dumps(eval(str(self.__dict__)))
+
+
+
+
     def __setitem__(self, __name, __value) -> None:
         """
         Provides indexing and assignment functionality to the object.

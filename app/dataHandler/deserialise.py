@@ -17,7 +17,11 @@ class Deserialise:
         videoData['channelId']=raw['videoDetails']['channelId']
         videoData['shortDescription']=raw['videoDetails']['shortDescription']
         videoData['viewCount']=int(raw['videoDetails']['viewCount'])
-        videoData['thumbnail']=thumbnail(raw['videoDetails']['thumbnail']['thumbnails'][-1])
+        
+      
+        
+
+        videoData['thumbnail']=thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
         
         videoData['isOwnerViewing']=True if raw['videoDetails']['isOwnerViewing']=='true' else False
         videoData['isCrawlable']=True if raw['videoDetails']['isCrawlable'] else False

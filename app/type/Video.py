@@ -1,5 +1,5 @@
 from app.type.Base import StrictDictionary
-from typing import List, Dict, override
+from typing import List, Dict
 
 class thumbnail(StrictDictionary):
     url:str

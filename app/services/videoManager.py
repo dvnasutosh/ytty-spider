@@ -1,4 +1,6 @@
 from json import loads,dumps
+import json
+
 
 
 from app.authentication.auth import Authentication
@@ -25,8 +27,4 @@ class videoManager:
         # return loads(self.player(videoId).text)
 
 
-x = videoManager()
-# print(  
-#     dumps(x.fetchDetails('a_7zDL3_YPM')['videoDetails'], indent=4)
-#     )
-print(x.fetchDetails('a_7zDL3_YPM'))
+

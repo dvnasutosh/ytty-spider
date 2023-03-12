@@ -8,3 +8,4 @@ chatgpt/
 share/
 .vscode/
 */*.json
+*.ipynb
