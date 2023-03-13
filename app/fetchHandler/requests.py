@@ -104,6 +104,7 @@ class yt_requests:
         # Setting client if context given
         self.PAYLOAD.setClient(**(client()))
         
+        
 
 
     def __init_subclass__(cls) -> None:
@@ -120,6 +121,12 @@ class yt_requests:
         # Setting client if context given
         self.PAYLOAD.setClient(**(client()))
     
+    def UpdatePF(self,PlatForm:PF):
+        if not isinstance(PlatForm, PF):
+            raise TypeError("Atribute not of type PF")
+        
+        self.PAYLOAD.setClient(**(PlatForm()))
+        
     def Fetch(self)-> requests.Response:
         return requests.post(url=self.URL,data=json.dumps(self.PAYLOAD),headers=self.HEADER)
     
