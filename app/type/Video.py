@@ -121,8 +121,8 @@ class adaptiveAudioList(list):
         super().__init__(args)
 
 class adaptiveList(StrictDictionary):
-    audio:adaptiveVideoList
-    video:adaptiveAudioList
+    audio:adaptiveAudioList
+    video:adaptiveVideoList
 
 class Downloadables(StrictDictionary):
     expiresInSeconds:int
@@ -147,3 +147,5 @@ class Downloadables(StrictDictionary):
 # video['isPrivate'] = False
 # video['isLiveContent'] = False
 # print(video)
+
+print(isinstance(adaptiveVideo, adaptiveAudio))
