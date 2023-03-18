@@ -48,21 +48,21 @@ class Deserialise:
         videoData=Video()
             
         videoData['videoId']=raw['videoDetails']['videoId']
-        videoData['title']=raw['videoDetails']['title']
-        videoData['author']=raw['videoDetails']['author']
-        videoData['lengthSeconds']=raw['videoDetails']['lengthSeconds']
-        videoData['keywords']=keywordList(args=raw['videoDetails']['keywords'])
-        videoData['channelId']=raw['videoDetails']['channelId']
-        videoData['shortDescription']=raw['videoDetails']['shortDescription']
-        videoData['viewCount']=int(raw['videoDetails']['viewCount'])
+        videoData['title']              =   raw['videoDetails']['title']
+        videoData['author']             =   raw['videoDetails']['author']
+        videoData['lengthSeconds']      =   raw['videoDetails']['lengthSeconds']
+        videoData['keywords']           =   keywordList(args=raw['videoDetails']['keywords']) if 'keywords' in raw['videoDetails'].keys() else keywordList()
+        videoData['channelId']          =   raw['videoDetails']['channelId']
+        videoData['shortDescription']   =   raw['videoDetails']['shortDescription']
+        videoData['viewCount']          =   int(raw['videoDetails']['viewCount'])
 
-        videoData['thumbnail']=thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
+        videoData['thumbnail']          =   thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
         
-        videoData['isOwnerViewing']=True if raw['videoDetails']['isOwnerViewing']=='true' else False
-        videoData['isCrawlable']=True if raw['videoDetails']['isCrawlable'] else False
-        videoData['allowRatings']=True if raw['videoDetails']['allowRatings'] else False
-        videoData['isPrivate']=True if raw['videoDetails']['isPrivate'] else False
-        videoData['isLiveContent']=True if raw['videoDetails']['isLiveContent'] else False
+        videoData['isOwnerViewing']     =   True if raw['videoDetails']['isOwnerViewing']=='true' else False
+        videoData['isCrawlable']        =   True if raw['videoDetails']['isCrawlable'] else False
+        videoData['allowRatings']       =   True if raw['videoDetails']['allowRatings'] else False
+        videoData['isPrivate']          =   True if raw['videoDetails']['isPrivate'] else False
+        videoData['isLiveContent']      =   True if raw['videoDetails']['isLiveContent'] else False
         return videoData
     
     @staticmethod
@@ -105,7 +105,6 @@ class Deserialise:
             streamItem.Download.itag                =   int(rawItem['itag'])
             streamItem.Download.url                 =   url(rawItem['url'])
             
-
             streamItem.Download.mimeType            =   deserialise_mimeType(mime=rawItem['mimeType'])
             
             streamItem.Download.bitrate             =   int(rawItem['bitrate'])
@@ -151,7 +150,6 @@ class Deserialise:
                 adaptiveAudioData.Download      =       commonMeta
                 adaptiveAudioData.adaptiveMeta  =       adaptive
                 
-                adaptiveAudioData.audioMeta.loudnessDb      =       float(rawItem['loudnessDb'])
                 adaptiveAudioData.audioMeta.audioQuality    =       str(rawItem['audioQuality'])
                 adaptiveAudioData.audioMeta.audioSampleRate =       int(rawItem['audioSampleRate'])
                 adaptiveAudioData.audioMeta.audioChannels   =       int(rawItem['audioChannels'])
