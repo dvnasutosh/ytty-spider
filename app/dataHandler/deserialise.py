@@ -1,7 +1,42 @@
 
 from app.type.Video import Video,thumbnail,keywordList
+
+from app.type.Video import streaming, Downloadables, adaptiveAudio, adaptiveVideo
+from app.type.Video import mimeTypeExt,url,mimeType as T
+
+
+
 from app.type.Interactions import Interactions
 
+from typing import Union
+import time
+import json
+
+def deserialise_mimeType(mime: str = str()):
+        
+        mimeType = mimeTypeExt()
+        # Split the input string to extract the mime type and codecs
+        parts = mime.split("; ")
+        Label = parts[0]
+        codecs = parts[1].replace("codecs=\"", "").replace("\"", "")
+        
+        mimeType.codec = codecs.split(",")
+        mimeType.label=Label
+        if 'video'in str.lower(Label):
+            if mimeType.codec.__len__()==1:
+                mimeType.Type=T.unmuxedVideo
+            
+            elif mimeType.codec.__len__()==2:
+                mimeType.Type=T.muxedVideo
+            
+            else:
+                mimeType=T.undefined
+        
+        elif 'audio' in str.lower(Label):
+            mimeType.Type=T.unmuxedAudio
+        else:
+            mimeType.Type=T.undefined
+        return mimeType
 
 class Deserialise:
     @staticmethod
@@ -17,9 +52,6 @@ class Deserialise:
         videoData['channelId']=raw['videoDetails']['channelId']
         videoData['shortDescription']=raw['videoDetails']['shortDescription']
         videoData['viewCount']=int(raw['videoDetails']['viewCount'])
-        
-      
-        
 
         videoData['thumbnail']=thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
         
@@ -29,7 +61,7 @@ class Deserialise:
         videoData['isPrivate']=True if raw['videoDetails']['isPrivate'] else False
         videoData['isLiveContent']=True if raw['videoDetails']['isLiveContent'] else False
         return videoData
-
+    
     @staticmethod
     def interactionData(raw:dict):
         interactions=Interactions()
@@ -44,5 +76,58 @@ class Deserialise:
         
         return interactions
     
+    @staticmethod
+    def streamingData(raw:dict):
+        #SECTION: Type Checking For attribute
+        try:
+            if not isinstance(raw, (str,dict)):
+                raise AttributeError('signature given is not of str or dict type')
+            
+            if isinstance(raw, str):
+                raw = json.loads(raw)
+
+            if not isinstance(raw, (str,dict)):
+                raise AttributeError('signature given is not of str or dict type')        
+        except Exception():
+            raise AttributeError('signature not in proper format.')
+        #!SECTION
         
-    
+        DownloadableData=Downloadables()
+        
+        DownloadableData['expiresInSeconds']=int(raw['streamingData']['expiresInSeconds'])
+        DownloadableData['since']=time.time()
+        
+        for rawItem in raw['streamingData']['formats']:
+            streamItem=streaming()
+            streamItem.Download.itag                =   int(rawItem['itag'])
+            streamItem.Download.url                 =   url(rawItem['url'])
+            
+
+            streamItem.Download.mimeType            =   deserialise_mimeType(mime=rawItem['mimeType'])
+            
+            streamItem.Download.bitrate             =   int(rawItem['bitrate'])
+            streamItem.Download.lastModified        =   int(rawItem['lastModified'])
+            streamItem.Download.quality             =   str(rawItem['quality'])
+            streamItem.Download.projectionType      =   str(rawItem['projectionType'])
+            streamItem.Download.approxDurationMs    =   int(rawItem['approxDurationMs'])
+            
+            streamItem.videoMeta.width              =   int(rawItem['width'])
+            streamItem.videoMeta.height             =   int(rawItem['height'])
+            streamItem.videoMeta.qualityLabel       =   str(rawItem['qualityLabel'])
+            streamItem.videoMeta.fps                =   int(rawItem['fps'])
+
+            streamItem.audioMeta.audioQuality       =   str(rawItem['audioQuality'])
+            streamItem.audioMeta.audioSampleRate    =   int(rawItem['audioSampleRate'])
+            streamItem.audioMeta.audioChannels      =   int(rawItem['audioChannels'])
+            
+            DownloadableData.muxed.append(streamItem)
+        
+        # for i in raw['streamingData']['adaptiveFormats']:
+            
+
+        # Testing
+        # print(raw['streamingData']['formats'])
+        # print(raw['streamingData']['adaptiveFormats'])
+        # print(DownloadableData(raw=True))
+
+        return DownloadableData
