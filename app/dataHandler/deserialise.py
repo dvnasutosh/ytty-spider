@@ -1,7 +1,10 @@
 
 from app.type.Video import Video,thumbnail,keywordList
 
-from app.type.Video import streaming, Downloadables, adaptiveAudio, adaptiveVideo
+from app.type.Video import streaming, DownloadableMeta,Downloadables
+
+from app.type.Video import adaptiveAudio, adaptiveVideo,adaptiveMeta
+
 from app.type.Video import mimeTypeExt,url,mimeType as T
 
 
@@ -122,9 +125,50 @@ class Deserialise:
             
             DownloadableData.muxed.append(streamItem)
         
-        # for i in raw['streamingData']['adaptiveFormats']:
-            
+        for rawItem in raw['streamingData']['adaptiveFormats']:
+            commonMeta=DownloadableMeta()
+            adaptive=adaptiveMeta()
 
+            commonMeta.itag                                 =       int(rawItem['itag'])
+            commonMeta.url                                  =       url(rawItem['url'])
+            commonMeta.mimeType                             =       deserialise_mimeType(mime=rawItem['mimeType'])
+            commonMeta.bitrate                              =       int(rawItem['bitrate'])
+            commonMeta.lastModified                         =       int(rawItem['lastModified'])
+            commonMeta.quality                              =       str(rawItem['quality'])
+            commonMeta.projectionType                       =       str(rawItem['projectionType'])
+            commonMeta.approxDurationMs                     =       int(rawItem['approxDurationMs'])
+
+            adaptive.averageBitrate                         =       int(rawItem['averageBitrate'])
+            adaptive.contentLength                          =       int(rawItem['contentLength'])
+            adaptive.indexRange.start                       =       int(rawItem['initRange']['start'])
+            adaptive.indexRange.end                         =       int(rawItem['initRange']['end'])
+            adaptive.indexRange.start                       =       int(rawItem['indexRange']['start'])
+            adaptive.indexRange.end                         =       int(rawItem['indexRange']['end'])
+
+            #   Checking if the data is audio or video data
+            if commonMeta.mimeType.Type == T.unmuxedAudio:
+                adaptiveAudioData               =       adaptiveAudio()
+                adaptiveAudioData.Download      =       commonMeta
+                adaptiveAudioData.adaptiveMeta  =       adaptive
+                
+                adaptiveAudioData.audioMeta.loudnessDb      =       float(rawItem['loudnessDb'])
+                adaptiveAudioData.audioMeta.audioQuality    =       str(rawItem['audioQuality'])
+                adaptiveAudioData.audioMeta.audioSampleRate =       int(rawItem['audioSampleRate'])
+                adaptiveAudioData.audioMeta.audioChannels   =       int(rawItem['audioChannels'])
+                
+                DownloadableData.unmuxed.audio.append(adaptiveAudioData)
+            
+            elif commonMeta.mimeType.Type == T.unmuxedVideo:
+                adaptiveVideoData               =        adaptiveVideo()
+                adaptiveVideoData.Download      =       commonMeta
+                adaptiveVideoData.adaptiveMeta  =       adaptive
+                
+                adaptiveVideoData.videoMeta.width           =       int(rawItem['width'])
+                adaptiveVideoData.videoMeta.height          =       int(rawItem['height'])
+                adaptiveVideoData.videoMeta.qualityLabel    =       str(rawItem['qualityLabel'])
+                adaptiveVideoData.videoMeta.fps             =       int(rawItem['fps'])
+
+                DownloadableData.unmuxed.video.append(adaptiveVideoData)
         # Testing
         # print(raw['streamingData']['formats'])
         # print(raw['streamingData']['adaptiveFormats'])
