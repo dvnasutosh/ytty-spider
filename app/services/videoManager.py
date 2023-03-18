@@ -38,8 +38,8 @@ class videoManager:
                 raise AttributeError('videoId Not set')
             videoId=self.videoId
         downloadRequest=player(self.auth,self.context)
-
-        # Initial Requests
+        
+        #   Initial Requests
         downloadRequest.UpdatePF(PF.ANDROID)
         raw=loads(downloadRequest(videoId).content)
 
@@ -56,16 +56,8 @@ class videoManager:
             return 'cipheredData:Deciphering To be Implemented'
         
         # Extracting Data
-        Deserialise.streamingData(raw)
-        
 
-vid=videoManager('rXMX4YJ7Lks') #LOGIN
-# vid=videoManager('p7rj5Hz5T-8')
-# print(dumps(vid.Download()['streamingData'],indent=4))
-
-(vid.Download())
-                
-
+        return Deserialise.streamingData(raw) 
 
 """
 Sample videoIds
