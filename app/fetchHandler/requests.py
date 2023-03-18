@@ -45,7 +45,7 @@ class PF(Enum):
         "clientName": "WEB",
         "clientVersion": "2.20230213.01.00"
     }
-    ANROID={
+    ANDROID={
             "clientName": "ANDROID",
             "clientVersion": "17.10.35",
             "androidSdkVersion": 30
@@ -104,8 +104,6 @@ class yt_requests:
         # Setting client if context given
         self.PAYLOAD.setClient(**(client()))
         
-        
-
 
     def __init_subclass__(cls) -> None:
 
@@ -125,8 +123,8 @@ class yt_requests:
         if not isinstance(PlatForm, PF):
             raise TypeError("Atribute not of type PF")
         
-        self.PAYLOAD.setClient(**(PlatForm()))
-        
+        self.PAYLOAD.setClient(**(PlatForm.value))
+
     def Fetch(self)-> requests.Response:
         return requests.post(url=self.URL,data=json.dumps(self.PAYLOAD),headers=self.HEADER)
     

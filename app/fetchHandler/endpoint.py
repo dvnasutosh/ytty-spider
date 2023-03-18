@@ -32,11 +32,12 @@ class search(yt_requests,endpoint_base):
     def __call__(self,query:str):
         self.PAYLOAD.setUParam(query=query)
         
+        self.raw=self.Fetch()
+        return self.raw
 
 class browse(yt_requests,endpoint_base):
     
     def __call__(self,browseId:str,param:str):
         self.PAYLOAD.setUParam(browseId=browseId,param=param)
 
-        self.raw=self.Fetch()
-        return self.raw
+
