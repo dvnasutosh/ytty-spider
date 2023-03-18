@@ -1,7 +1,7 @@
 from typing import Any,get_origin
 import typing
 import json
-
+from enum import Enum
 
 class Dictionary(dict):
     """
@@ -27,14 +27,15 @@ class Dictionary(dict):
         """
         Returns a string representation of the object's dictionary.
         """
-        
+        # print(self.__dict__)
         return str(self.__dict__)
     
     def __call__(self,raw:bool=False) -> dict:
-        return eval(str(self.__dict__)) if raw else self.__dict__
+
+        return self.__dict__
     
     def __str__(self):
-        return json.dumps(eval(str(self.__dict__)))
+        return str(self.__dict__)
 
 
 
@@ -70,7 +71,6 @@ class StrictDictionary(Dictionary):
                 #SECTION: validation logic
                 expected_type=self.__annotations__[i] if not get_origin(self.__annotations__[i]) else get_origin(self.__annotations__[i])
                 
-                
                 if not isinstance(j,expected_type):
                     raise TypeError(
                         f'{i} key has a value {j} which is of type {type(j)}. {expected_type} expected.')
@@ -85,22 +85,30 @@ class StrictDictionary(Dictionary):
         for i, j in cls.__annotations__.items():
             if i in cls.__dict__.keys():
                 
-                #validation logic
-                # Checking if expected_type is of Typing Class than converting it into it's base class
+                #   validation logic
+                #   Checking if expected_type is of Typing Class than converting it into it's base class
                 
                 expected_type=j if not get_origin(j) else get_origin(j)        
-                # Raise error if the given value is not of the expected type
+                #   Raise error if the given value is not of the expected type
                 if not isinstance(cls.__dict__[i],expected_type):
                     raise TypeError(
                         f'{i} key has a value {cls.__dict__[i]} which is of type {type(cls.__dict__[i])}. {expected_type} expected.')
                 
                 cls.idata[i]=cls.__dict__[i]
             else:
-                if type(j) is type:
-                    cls.idata[i]=j()
+                if type(get_origin(j)) == type(Enum) or type(j)== type(Enum):
+                    
+                    #   Checking if default exists as a param
+                    if 'default' not in j.__members__.keys():
+
+                        raise AttributeError(f'You need default to be set as a enum member. of {j}. Current {j._member_names_}')
+                    
+                    cls.idata[i]=j.__members__['default']
+                elif type(j) is type:
+                    cls.idata[i] = j()
                     
                 elif get_origin(j):
-                    cls.idata[i]=j.__origin__()
+                    cls.idata[i] = j.__origin__()
                 else:
                     raise ValueError(f"can't assign {type(j)} data. Illegal Value.")
 
