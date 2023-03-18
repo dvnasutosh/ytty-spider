@@ -48,7 +48,6 @@ class PF(Enum):
     ANDROID={
             "clientName": "ANDROID",
             "clientVersion": "17.10.35",
-            "androidSdkVersion": 30
     }
     TV={
         "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
