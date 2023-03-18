@@ -1,45 +1,166 @@
-# Imports
-from pydantic import BaseModel
+from typing import Any,get_origin
 import typing
+import json
+from enum import Enum
 
-class DynamicMembers(BaseModel):
+class Dictionary(dict):
     """
-    A class that allows creation and assignment of member data using square bracket notation.
-
-    This class inherits from `pydantic.BaseModel` and automatically generates the `__fields__` attribute based on the
-    field annotations in the class definition. The class also provides the ability to assign values to the members using
-    square bracket notation, and it raises a `KeyError` if you try to assign a value to a member that doesn't exist.
+    A class that can be used to create a dictionary-like object with arbitrary key-value pairs.
     """
-    def __init__(self):
+    def __init__(self, **kwargs) -> None:
         """
-        Initialize an instance of the `DynamicMembers` class.
+        Initializes the object with the given keyword arguments.
+        If no arguments are given, the attributes are set to `None`.
+        """
+        # Iterate over the class annotations and set the attributes
+        # based on the given keyword arguments
+        for i,j in self.__annotations__.items():
+            try:
+                getattr(self,i)
+            except AttributeError:
+                setattr(self,i,None)
+        for i, j in self.__annotations__.items() if not kwargs else kwargs.items(): # k if k=.. else annot
+            setattr(self, i, j)
 
-        This method creates an empty dictionary `data` and sets the value of each key in `data` to `None` based on the field
-        names and types defined in the `__fields__` attribute of the class.
+
+    def __repr__(self) -> str:
         """
-        self.data = {}
-        for key, value in self.__fields__.items():
-            self.data[key] = None
+        Returns a string representation of the object's dictionary.
+        """
+        # print(self.__dict__)
+        return str(self.__dict__)
+    
+    def __call__(self,raw:bool=False) -> dict:
+
+        return self.__dict__
+    
+    def __str__(self):
+        return str(self.__dict__)
+
+
+
+
+    def __setitem__(self, __name, __value) -> None:
+        """
+        Provides indexing and assignment functionality to the object.
+        """
+        setattr(self, __name, __value)
+
+    def __getitem__(self, __name) -> Any:
+        """
+        Provides indexing and retrieval functionality to the object.
+        """
+        return self.__dict__[__name]
+
+class StrictDictionary(Dictionary):
+    """
+    A subclass of `Dictionary` that enforces strict typing of the values based on the annotations of the class attributes.
+    """
+    def __init__(self, **kwargs) -> None:
+        """
+        Initialize any given data to be stored. The default datas are stored regardless 
+        """
+        # Adding default values
+        for i,j in self.idata.items():
+            super().__setitem__(i,j)
+        if kwargs:
+            # if kwargs exists adding all the given values using super class
+            
+            for i,j in kwargs.items():
+                
+                #SECTION: validation logic
+                expected_type=self.__annotations__[i] if not get_origin(self.__annotations__[i]) else get_origin(self.__annotations__[i])
+                
+                if not isinstance(j,expected_type):
+                    raise TypeError(
+                        f'{i} key has a value {j} which is of type {type(j)}. {expected_type} expected.')
+                #!SECTION
+                
+                super().__setitem__(i,j)
+                
+    def __init_subclass__(cls) -> None:
+        cls.idata=dict()
+        if not cls.__annotations__:
+            raise AttributeError('You need to add type hintings for now. Will be solved in future versions. partial annotation is accepted but is not allowed as a part of the data')
+        for i, j in cls.__annotations__.items():
+            if i in cls.__dict__.keys():
+                
+                #   validation logic
+                #   Checking if expected_type is of Typing Class than converting it into it's base class
+                
+                expected_type=j if not get_origin(j) else get_origin(j)        
+                #   Raise error if the given value is not of the expected type
+                if not isinstance(cls.__dict__[i],expected_type):
+                    raise TypeError(
+                        f'{i} key has a value {cls.__dict__[i]} which is of type {type(cls.__dict__[i])}. {expected_type} expected.')
+                
+                cls.idata[i]=cls.__dict__[i]
+            else:
+                if type(get_origin(j)) == type(Enum) or type(j)== type(Enum):
+                    
+                    #   Checking if default exists as a param
+                    if 'default' not in j.__members__.keys():
+
+                        raise AttributeError(f'You need default to be set as a enum member. of {j}. Current {j._member_names_}')
+                    
+                    cls.idata[i]=j.__members__['default']
+                elif type(j) is type:
+                    cls.idata[i] = j()
+                    
+                elif get_origin(j):
+                    cls.idata[i] = j.__origin__()
+                else:
+                    raise ValueError(f"can't assign {type(j)} data. Illegal Value.")
 
         
-    def __setitem__(self, key, value):
+    def __setattr__(self, __name: str, __value: Any) -> None:
         """
-        Set the value of a member data item.
+        Overrides the superclass `__setattr__` method to perform type checking before assignment.
+        If the value to be assigned is not of the expected type, a `TypeError` is raised.
+        """
+        expected_type=self.__annotations__[__name] 
+        
+        # Checking if expected_type is of Typing Class than converting it into it's base class
+        if get_origin(expected_type):
+            expected_type=get_origin(expected_type)
+        
+        # Raise error if the given value is not of the expected type
+        if not isinstance(__value,expected_type):
+            raise TypeError(
+                f'{__name} key has a value {__value} which is of type {type(__value)}. {expected_type} expected.')
+        
+        super().__setattr__(__name, __value)
 
-        This method allows you to assign a value to a member using square bracket notation, and it raises a `KeyError` if
-        you try to assign a value to a member that doesn't exist. The method also raises a `TypeError` if the value being
-        assigned is not of the correct type.
+
+    def __setitem__(self, __name, __value) -> None:
         """
-        if key in self.__fields__:
-            field_type = self.__fields__[key].type_
-            if isinstance(field_type, typing._SpecialForm):
-                if isinstance(value, field_type.__args__):
-                    self.data[key] = value
-                else:
-                    raise TypeError(f"Expected value of type {field_type.__args__}, got {type(value)}")
-            elif isinstance(value, field_type) or isinstance(value, typing._SpecialForm):
-                self.data[key] = value
-            else:
-                raise TypeError(f"Expected value of type {field_type}, got {type(value)}")
+        Overrides the superclass `__setitem__` method to perform type checking before assignment.
+        If the value to be assigned is not of the expected type, a `TypeError` is raised.
+        """
+        expected_type=self.__annotations__[__name]
+
+        # verifying for Typing types
+        if get_origin(expected_type):
+            expected_type=expected_type.__origin__
+
+        if not isinstance(__value,expected_type):
+            raise TypeError(
+                f'{__name} key has a value {__value} which is of type {type(__value)}. {self.__annotations__[__name]} expected.')
         else:
-            raise KeyError(f"{key} is not a valid member")
+            super().__setitem__(__name, __value)
+
+        """
+        Overrides the superclass `__setitem__` method to perform type checking before assignment.
+        If the value to be assigned is not of the expected type, a `TypeError` is raised.
+        """
+        expected_type=self.__annotations__[__name]
+
+        # verifying for Typing types
+        if get_origin(expected_type):
+            expected_type=expected_type.__origin__
+
+        if not isinstance(__value,expected_type):
+            raise TypeError(
+                f'{__name} key has a value {__value} which is of type {type(__value)}. {self.__annotations__[__name]} expected.')
+        else:
+            super().__setitem__(__name, __value)
