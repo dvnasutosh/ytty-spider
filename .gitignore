@@ -9,3 +9,4 @@ share/
 .vscode/
 */*.json
 *.ipynb
+try.py
