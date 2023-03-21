@@ -2,8 +2,8 @@ from typing import Any,get_origin
 import typing
 import json
 from enum import Enum
-
-class Dictionary(dict):
+from app.common.to_dict import to_raw_dict
+class Dictionary:
     """
     A class that can be used to create a dictionary-like object with arbitrary key-value pairs.
     """
@@ -37,6 +37,10 @@ class Dictionary(dict):
     def __str__(self):
         return str(self.__dict__)
 
+    def __json__(self):
+        return json.dumps(self.__raw__())
+    def __raw__(self):
+        return to_raw_dict(self.__dict__)
 
 
 
