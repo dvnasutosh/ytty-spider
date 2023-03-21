@@ -1,7 +1,11 @@
 import urllib.parse
-from app.type.Base import StrictDictionary
+from urllib.parse import urlparse, parse_qsl
+
 from typing import List, Dict, Union, Any
 from enum import Enum
+import re
+
+from app.type.Base import StrictDictionary
 
 class thumbnail(StrictDictionary):
     url:str
@@ -13,7 +17,6 @@ class keywordList(list):
         if not all([isinstance(i, str) for i in args]):
             raise ValueError('keywordList will need to have "str" type items only')
         super().__init__(args)
-
 
 class Video(StrictDictionary):
     videoId: str
@@ -47,12 +50,33 @@ class mimeTypeExt(StrictDictionary):
     label:str
     codec:List[str]
 
-class url:
-    def __init__(self,data=''):
-        self.raw=str(data)
-    def __repr__(self):
-        return self.raw
+class url(str):
+    def __new__(cls, url_string=str()):
+        if not url_string:
+            obj=super().__new__(cls,url_string)
+            obj.query_params=dict()
+            return obj
+        if not isinstance(url_string, str):
+            raise TypeError(f"Expected str, but got {type(string).__name__}")
+        parsed_url = urlparse(url_string)
+        if not all([parsed_url.scheme, parsed_url.netloc]):
+            raise ValueError("Invalid URL")
+        obj = super().__new__(cls, url_string)
+        obj.query_params = dict(parse_qsl(parsed_url.query))
+        return obj
 
+    @staticmethod
+    def is_valid_url(url_string):
+        regex = re.compile(
+            r"^(?:http|ftp)s?://"  # http:// or https:// or ftp:// or ftps://
+            # domain...
+            r"(?:[A-Za-z0-9]+(?:[-._][A-Za-z0-9]+)*\.)+[A-Za-z]{2,}"
+            # port...
+            r"(?::\d{2,5})?"
+            # path...
+            r"(?:/.*)?$",
+            re.IGNORECASE
+        )
 
 class DownloadableMeta(StrictDictionary):
     itag:int
@@ -119,6 +143,7 @@ class adaptiveAudioList(list):
         if not all([isinstance(i, adaptiveAudio) for i in args]):
             raise ValueError('adaptiveAudioList will need to have "adaptiveAudio" type items only')
         super().__init__(args)
+
 
 class adaptiveList(StrictDictionary):
     audio:adaptiveAudioList
