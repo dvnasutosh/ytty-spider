@@ -4,7 +4,7 @@ import json
 from enum import Enum
 
 from app.type.Base import StrictDictionary
-from app.authentication.auth import Authentication
+from app.authentication.auth import Authentication  
 
 class ResourceName(Enum):
     API:str=r'https://www.youtube.com/'
@@ -47,7 +47,7 @@ class PF(Enum):
     }
     ANDROID={
             "clientName": "ANDROID",
-            "clientVersion": "17.10.35",
+            "clientVersion": "18.10.36",
     }
     TV={
         "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
@@ -126,5 +126,3 @@ class yt_requests:
 
     def Fetch(self)-> requests.Response:
         return requests.post(url=self.URL,data=json.dumps(self.PAYLOAD),headers=self.HEADER)
-    
-    

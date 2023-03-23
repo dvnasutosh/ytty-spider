@@ -33,7 +33,7 @@ class Video(StrictDictionary):
     allowRatings: bool
     isPrivate: bool
     isLiveContent: bool
-    isFamilySafe:bool
+    isFamilySafe: bool
     
     # Test purpose sample Data
 
