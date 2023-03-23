@@ -47,7 +47,7 @@ class Deserialise:
         # videoData=Video()
         videoData=Video()
             
-        videoData['videoId']=raw['videoDetails']['videoId']
+        videoData['videoId']            =   raw['videoDetails']['videoId']
         videoData['title']              =   raw['videoDetails']['title']
         videoData['author']             =   raw['videoDetails']['author']
         videoData['lengthSeconds']      =   raw['videoDetails']['lengthSeconds']
@@ -74,8 +74,8 @@ class Deserialise:
         # filtering like subtext
         likeText=filteredLikeSection['defaultText']['accessibility']['accessibilityData']['label']
         
-        interactions['likes']=int(''.join([i for i in likeText if str.isdigit(i)]))    #Coz f* regex
-        interactions['comments_continuation']=content[3]['itemSectionRenderer']['contents'][0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
+        interactions['likes']                           =       int(''.join([i for i in likeText if str.isdigit(i)]))    #Coz f* regex
+        interactions['comments_continuation']           =       content[3]['itemSectionRenderer']['contents'][0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
         
         return interactions
     
