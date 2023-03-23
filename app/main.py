@@ -78,7 +78,7 @@ def get_video_interactions():
 def get_video_comments():
     return 'Temp comments Details returned'
 
-@app.route('/video/Downloads',methods=['POST','GET'])
+@app.route('/video/downloads',methods=['POST','GET'])
 def get_video_downloads():
 
     if request.args.keys().__len__()!=1 and "videoId" in request.args.keys():
