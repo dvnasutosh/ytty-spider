@@ -71,12 +71,25 @@ def get_video_interactions():
         }
 
 
-
-
-
 @app.route('/video/comments',methods=['POST','GET'])
 def get_video_comments():
-    return 'Temp comments Details returned'
+
+    if request.args.keys().__len__()!=1 and "videoId" in request.args.keys():
+            return {"error":"Invalid query:only videoId allowed as param"}
+        
+    if request.method=='POST':
+        try:
+            Opt=Options(request.JSON)
+        except TypeError as e:
+            return {Error:str(e)},400
+        video=vm(videoId=request.args['videoId'])
+    elif request.method=='GET':
+        video=vm(videoId=request.args['videoId'])
+    return {
+        'comments':video.comments().__raw__()
+        
+    }
+
 
 @app.route('/video/downloads',methods=['POST','GET'])
 def get_video_downloads():
