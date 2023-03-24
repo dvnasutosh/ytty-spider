@@ -6,14 +6,15 @@ from app.type.Video import streaming, DownloadableMeta,Downloadables
 from app.type.Video import adaptiveAudio, adaptiveVideo,adaptiveMeta
 
 from app.type.Video import mimeTypeExt,url,mimeType as T
-
-
+from app.type.Comments import Comment,CommentsList,continuationToken,Comments
 
 from app.type.Interactions import Interactions
 
 from typing import Union
 import time
 import json
+from app.dataHandler.helper import filterInt,convert_to_number
+
 
 def deserialise_mimeType(mime: str = str()):
         
@@ -41,6 +42,37 @@ def deserialise_mimeType(mime: str = str()):
             mimeType.Type=T.undefined
         return mimeType
 
+def deserialise_comment(raw:str):
+
+    commentRenderer         =   raw['commentThreadRenderer']['comment']['commentRenderer']
+    
+    comment=Comment()
+    
+    comment.commentId                               =   str(commentRenderer['commentId'])
+    
+    for text in commentRenderer['contentText']['runs']:
+        comment.text                                =   str(comment.text + (text['text']+" "))
+    
+    comment.author.authorText                       =   str(commentRenderer['authorText']['simpleText'])
+    comment.author.authorThumbnail                  =   thumbnail(**commentRenderer['authorThumbnail']['thumbnails'][-1])
+    comment.author.browseId                         =   str(commentRenderer['authorEndpoint']['browseEndpoint']['browseId'])
+    
+    
+    comment.publishedOn.publishedTimeText           =   str(commentRenderer['publishedTimeText']['runs'][0]['text'])
+    comment.publishedOn.since                       =   float(time.time())
+    
+    comment.isLiked                                 =   True if commentRenderer['isLiked']  == "true" else False
+    comment.authorIsChannelOwner                    =   True if commentRenderer['authorIsChannelOwner'] == "true" else False
+    
+    comment.voteStatus                              =   str(commentRenderer['voteStatus'])
+    comment.voteCountApprox                         =   int(convert_to_number(commentRenderer['voteCount']['simpleText']))
+    if 'replies' in raw['commentThreadRenderer'].keys():
+        commentRepliesRenderer  =   raw['commentThreadRenderer']['replies']['commentRepliesRenderer']['contents']
+
+        comment.replyContinuation                   =   commentRepliesRenderer[0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
+        comment.replyCount                              =   int(commentRenderer['replyCount'])
+    return comment
+    
 class Deserialise:
     @staticmethod
     def videoData(raw:dict) -> dict:
@@ -74,11 +106,33 @@ class Deserialise:
         # filtering like subtext
         likeText=filteredLikeSection['defaultText']['accessibility']['accessibilityData']['label']
         
-        interactions['likes']                           =       int(''.join([i for i in likeText if str.isdigit(i)]))    #Coz f* regex
+        interactions['likes']                           =       filterInt(likeText)    #Coz f* regex
         interactions['comments_continuation']           =       content[3]['itemSectionRenderer']['contents'][0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
         
         return interactions
     
+    @staticmethod
+    def Comments(raw:dict):
+        CommentList=CommentsList()
+
+
+        s=raw['onResponseReceivedEndpoints'][0]['reloadContinuationItemsCommand']['continuationItems'][0]['commentsHeaderRenderer']['countText']['runs'][0]['text']
+        count=filterInt(s)
+        Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][:-1:]
+        
+        for comRaw in Items:
+            CommentList.append(deserialise_comment(comRaw))
+        
+        #checking For final to be comment or continuation
+        Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][-1]
+        if 'continuationItemRenderer' in Items.keys():
+            CommentList.append( continuationToken(Items['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
+
+        elif 'commentThreadRenderer' in Items.keys():
+            CommentList.append(deserialise_comment(Items))
+            CommentList.append(continuationToken())
+        return Comments(count=count,List=CommentList)
+
     @staticmethod
     def streamingData(raw:dict):
         #SECTION: Type Checking For attribute
@@ -167,9 +221,4 @@ class Deserialise:
                 adaptiveVideoData.videoMeta.fps             =       int(rawItem['fps'])
 
                 DownloadableData.unmuxed.video.append(adaptiveVideoData)
-        # Testing
-        # print(raw['streamingData']['formats'])
-        # print(raw['streamingData']['adaptiveFormats'])
-        # print(DownloadableData(raw=True))
-
         return DownloadableData
