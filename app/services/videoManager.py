@@ -74,19 +74,18 @@ class videoManager:
         # Extracting Data
         return Deserialise.streamingData(raw) 
 
-    def comments(self,videoId:str=str(),continuation:str=str()):
-        
-        videoId=self.videoExists(videoId)
-
+    def comments(self,videoId:str=str(),continuation:str=str(),continued=bool()):
         if not continuation:
+            videoId=self.videoExists(videoId)
             continuation=self.interactionData(videoId).comments_continuation
         
         self.next.UpdatePF(PF.WEB)
         raw=self.next(videoId=videoId,continuation=continuation)
-
-        return Deserialise.Comments(loads(raw.text))
-        
-        
+        if continued:
+            return Deserialise.ContinuedComments(loads(raw.text))
+        else:
+            return Deserialise.Comments(loads(raw.text))
+    
 """
 
 Sample videoIds
