@@ -27,18 +27,18 @@ class Dictionary:
         """
         Returns a string representation of the object's dictionary.
         """
-        # print(self.__dict__)
         return str(self.__dict__)
     
     def __call__(self,raw:bool=False) -> dict:
 
-        return self.__dict__
+        return self.__dict__ if not raw else self.__raw__()
     
     def __str__(self):
         return str(self.__dict__)
 
     def __json__(self):
         return json.dumps(self.__raw__())
+    
     def __raw__(self):
         return to_raw_dict(self.__dict__)
 
