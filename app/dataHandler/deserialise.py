@@ -114,8 +114,7 @@ class Deserialise:
     @staticmethod
     def Comments(raw:dict):
         CommentList=CommentsList()
-
-
+        
         s=raw['onResponseReceivedEndpoints'][0]['reloadContinuationItemsCommand']['continuationItems'][0]['commentsHeaderRenderer']['countText']['runs'][0]['text']
         count=filterInt(s)
         Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][:-1:]
@@ -132,6 +131,20 @@ class Deserialise:
             CommentList.append(deserialise_comment(Items))
             CommentList.append(continuationToken())
         return Comments(count=count,List=CommentList)
+    @staticmethod
+    def ContinuedComments(raw:dict):
+        CommentList=CommentsList()
+        Items=raw['onResponseReceivedEndpoints'][0]['appendContinuationItemsAction']['continuationItems']
+        
+        for comRaw in Items[:-1:]:
+            CommentList.append(deserialise_comment(comRaw))
+        if 'continuationItemRenderer' in Items[-1].keys():
+            CommentList.append( continuationToken(Items[-1]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
+
+        elif 'commentThreadRenderer' in Items[-1].keys():
+            CommentList.append(deserialise_comment(Items[-1]))
+            CommentList.append(continuationToken())
+        return Comments(count=0,List=CommentList)
 
     @staticmethod
     def streamingData(raw:dict):
@@ -159,22 +172,22 @@ class Deserialise:
             streamItem.Download.itag                =   int(rawItem['itag'])
             streamItem.Download.url                 =   url(rawItem['url'])
             
-            streamItem.Download.mimeType            =   deserialise_mimeType(mime=rawItem['mimeType'])
+            streamItem.Download.mimeType                    =   deserialise_mimeType(mime=rawItem['mimeType'])
             
-            streamItem.Download.bitrate             =   int(rawItem['bitrate'])
-            streamItem.Download.lastModified        =   int(rawItem['lastModified'])
-            streamItem.Download.quality             =   str(rawItem['quality'])
-            streamItem.Download.projectionType      =   str(rawItem['projectionType'])
-            streamItem.Download.approxDurationMs    =   int(rawItem['approxDurationMs'])
+            streamItem.Download.bitrate                     =   int(rawItem['bitrate'])
+            streamItem.Download.lastModified                =   int(rawItem['lastModified'])
+            streamItem.Download.quality                     =   str(rawItem['quality'])
+            streamItem.Download.projectionType              =   str(rawItem['projectionType'])
+            streamItem.Download.approxDurationMs            =   int(rawItem['approxDurationMs'])
             
-            streamItem.videoMeta.width              =   int(rawItem['width'])
-            streamItem.videoMeta.height             =   int(rawItem['height'])
-            streamItem.videoMeta.qualityLabel       =   str(rawItem['qualityLabel'])
-            streamItem.videoMeta.fps                =   int(rawItem['fps'])
+            streamItem.videoMeta.width                      =   int(rawItem['width'])
+            streamItem.videoMeta.height                     =   int(rawItem['height'])
+            streamItem.videoMeta.qualityLabel               =   str(rawItem['qualityLabel'])
+            streamItem.videoMeta.fps                        =   int(rawItem['fps'])
 
-            streamItem.audioMeta.audioQuality       =   str(rawItem['audioQuality'])
-            streamItem.audioMeta.audioSampleRate    =   int(rawItem['audioSampleRate'])
-            streamItem.audioMeta.audioChannels      =   int(rawItem['audioChannels'])
+            streamItem.audioMeta.audioQuality               =   str(rawItem['audioQuality'])
+            streamItem.audioMeta.audioSampleRate            =   int(rawItem['audioSampleRate'])
+            streamItem.audioMeta.audioChannels              =   int(rawItem['audioChannels'])
             
             DownloadableData.muxed.append(streamItem)
         
