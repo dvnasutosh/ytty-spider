@@ -1,5 +1,5 @@
 
-from app.type.Video import Video,thumbnail,keywordList
+from app.type.Video import Video,thumbnail,strbool,strList,dateInt,liveBroadcast
 
 from app.type.Video import streaming, DownloadableMeta,Downloadables
 
@@ -78,25 +78,39 @@ class Deserialise:
     def videoData(raw:dict) -> dict:
         # videoData=Video()
         videoData=Video()
-            
-        videoData['videoId']            =   raw['videoDetails']['videoId']
-        videoData['title']              =   raw['videoDetails']['title']
-        videoData['author']             =   raw['videoDetails']['author']
-        videoData['lengthSeconds']      =   raw['videoDetails']['lengthSeconds']
-        videoData['keywords']           =   keywordList(args=raw['videoDetails']['keywords']) if 'keywords' in raw['videoDetails'].keys() else keywordList()
-        videoData['channelId']          =   raw['videoDetails']['channelId']
-        videoData['shortDescription']   =   raw['videoDetails']['shortDescription']
-        videoData['viewCount']          =   int(raw['videoDetails']['viewCount'])
 
-        videoData['thumbnail']          =   thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
+        videoData['videoId']                            =   raw['videoDetails']['videoId']
+        videoData['title']                              =   raw['videoDetails']['title']
+        videoData['author']                             =   raw['videoDetails']['author']
+        videoData['lengthSeconds']                      =   raw['videoDetails']['lengthSeconds']
+        videoData['keywords']                           =   strList(args=raw['videoDetails']['keywords']) if 'keywords' in raw['videoDetails'].keys() else keywordList()
+        videoData['channelId']                          =   raw['videoDetails']['channelId']
+        videoData['shortDescription']                   =   raw['videoDetails']['shortDescription']
+        videoData['viewCount']                          =   int(raw['videoDetails']['viewCount'])
+
+        videoData['thumbnail']                          =   thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
+
+        videoData['isOwnerViewing']                     =   strbool(raw['videoDetails']['isOwnerViewing'])
+        videoData['isCrawlable']                        =   strbool(raw['videoDetails']['isCrawlable']) 
+        videoData['allowRatings']                       =   strbool(raw['videoDetails']['allowRatings']) 
+        videoData['isPrivate']                          =   strbool(raw['videoDetails']['isPrivate']) 
+        videoData['isLiveContent']                      =   strbool(raw['videoDetails']['isLiveContent'])
         
-        videoData['isOwnerViewing']     =   True if raw['videoDetails']['isOwnerViewing']=='true' else False
-        videoData['isCrawlable']        =   True if raw['videoDetails']['isCrawlable'] else False
-        videoData['allowRatings']       =   True if raw['videoDetails']['allowRatings'] else False
-        videoData['isPrivate']          =   True if raw['videoDetails']['isPrivate'] else False
-        videoData['isLiveContent']      =   True if raw['videoDetails']['isLiveContent'] else False
+        videoData['isUnlisted']                         =   strbool(raw['microformat']['playerMicroformatRenderer']['isUnlisted'])
+        videoData['hasYpcMetadata']                     =   strbool(raw['microformat']['playerMicroformatRenderer']['hasYpcMetadata'])
+        videoData['isFamilySafe']                       =   strbool(raw['microformat']['playerMicroformatRenderer']['isFamilySafe'])
+        videoData['category']                           =   str(raw['microformat']['playerMicroformatRenderer']['category'])
+        videoData['publishDate']                        =   dateInt(raw['microformat']['playerMicroformatRenderer']['publishDate'])
+        videoData['uploadDate']                         =   dateInt(raw['microformat']['playerMicroformatRenderer']['uploadDate'])
+        
+        if 'availableCountries' in raw['microformat']['playerMicroformatRenderer'].keys():
+            videoData['availableCountries']             =   strList(raw['microformat']['playerMicroformatRenderer']['availableCountries'])
+        
+        if 'liveBroadcastDetails' in raw['microformat']['playerMicroformatRenderer'].keys():
+            videoData['liveBroadcastDetails']           =   liveBroadcast(**raw['microformat']['playerMicroformatRenderer']['liveBroadcastDetails'])
+
         return videoData
-    
+
     @staticmethod
     def interactionData(raw:dict):
         interactions=Interactions()
@@ -131,6 +145,7 @@ class Deserialise:
             CommentList.append(deserialise_comment(Items))
             CommentList.append(continuationToken())
         return Comments(count=count,List=CommentList)
+
     @staticmethod
     def ContinuedComments(raw:dict):
         CommentList=CommentsList()
