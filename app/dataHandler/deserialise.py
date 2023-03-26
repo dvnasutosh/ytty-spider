@@ -102,7 +102,9 @@ class Deserialise:
         videoData['category']                           =   str(raw['microformat']['playerMicroformatRenderer']['category'])
         videoData['publishDate']                        =   dateInt(raw['microformat']['playerMicroformatRenderer']['publishDate'])
         videoData['uploadDate']                         =   dateInt(raw['microformat']['playerMicroformatRenderer']['uploadDate'])
-        videoData['availableCountries']                 =   strList(raw['microformat']['playerMicroformatRenderer']['availableCountries'])
+        
+        if 'availableCountries' in raw['microformat']['playerMicroformatRenderer'].keys():
+            videoData['availableCountries']             =   strList(raw['microformat']['playerMicroformatRenderer']['availableCountries'])
         
         if 'liveBroadcastDetails' in raw['microformat']['playerMicroformatRenderer'].keys():
             videoData['liveBroadcastDetails']           =   liveBroadcast(**raw['microformat']['playerMicroformatRenderer']['liveBroadcastDetails'])
