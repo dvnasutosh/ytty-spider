@@ -7,7 +7,7 @@ import re
 import datetime
 
 from app.type.Base import StrictDictionary
-from app.type.common import thumbnail,strbool,strList,dateInt,url
+from app.type.common import img,strbool,strList,dateInt,url
 
 class liveBroadcast(StrictDictionary):
     isLiveNow:strbool
@@ -23,7 +23,7 @@ class Video(StrictDictionary):
     channelId: str
     shortDescription: str
     viewCount:int
-    thumbnail:thumbnail
+    thumbnail:img
 
     isOwnerViewing: strbool
     isCrawlable: strbool
