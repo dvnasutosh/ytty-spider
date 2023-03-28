@@ -11,7 +11,6 @@ from app.dataHandler.deserialise import Deserialise
 
 class videoManager:
     def __init__(self, videoId: str = None, auth: Authentication = Authentication(), context: CONTEXT = CONTEXT()):
-        self.videoId = videoId
         self.auth=auth
         self.context=context
 
