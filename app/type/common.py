@@ -1,4 +1,7 @@
-class thumbnail(StrictDictionary):
+from app.type.Base import StrictDictionary
+import re
+
+class img(StrictDictionary):
     url:str
     width:int
     height:int
