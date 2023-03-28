@@ -37,7 +37,8 @@ class search(yt_requests,endpoint_base):
 
 class browse(yt_requests,endpoint_base):
     
-    def __call__(self,browseId:str,param:str):
+    def __call__(self,browseId:str,param:str=str()):
         self.PAYLOAD.setUParam(browseId=browseId,param=param)
 
-
+        self.raw=self.Fetch()
+        return self.raw
