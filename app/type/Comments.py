@@ -1,10 +1,10 @@
 from app.type.Base import StrictDictionary
-from app.type.Video import thumbnail
+from app.type.common import img
 
 
 class authorSimple(StrictDictionary):
     authorText:str
-    authorThumbnail:thumbnail
+    authorThumbnail:img
     browseId:str
 class publishTime(StrictDictionary):
     publishedTimeText:str
@@ -29,7 +29,7 @@ class continuationToken(str):
 class CommentsList(list):
     def __init__(self,args:list=list()):
         if not all([isinstance(i, (Comment,continuationToken)) for i in args]):
-            raise ValueError('adaptiveVideoList will need to have "adaptiveVideo" type items only')
+            raise ValueError('CommentsList will need to have "Comment" or "continuationToken" type items only')
         super().__init__(args)
 
 
