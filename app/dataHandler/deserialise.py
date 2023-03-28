@@ -1,20 +1,21 @@
 
-from app.type.Video import Video,thumbnail,strbool,strList,dateInt,liveBroadcast
-
+from app.type.Video import Video,liveBroadcast
+from app.type.common import img,strbool,strList,dateInt,url
 from app.type.Video import streaming, DownloadableMeta,Downloadables
 
 from app.type.Video import adaptiveAudio, adaptiveVideo,adaptiveMeta
 
-from app.type.Video import mimeTypeExt,url,mimeType as T
+from app.type.Video import mimeTypeExt,mimeType as T
 from app.type.Comments import Comment,CommentsList,continuationToken,Comments
 
 from app.type.Interactions import Interactions
+
+from app.dataHandler.deserialiser.channelData import deserialise_channelDetails
 
 from typing import Union
 import time
 import json
 from app.dataHandler.helper import filterInt,convert_to_number
-
 
 def deserialise_mimeType(mime: str = str()):
         
@@ -54,7 +55,7 @@ def deserialise_comment(raw:str):
         comment.text                                =   str(comment.text + (text['text']+" "))
     
     comment.author.authorText                       =   str(commentRenderer['authorText']['simpleText'])
-    comment.author.authorThumbnail                  =   thumbnail(**commentRenderer['authorThumbnail']['thumbnails'][-1])
+    comment.author.authorThumbnail                  =   img(**commentRenderer['authorThumbnail']['thumbnails'][-1])
     comment.author.browseId                         =   str(commentRenderer['authorEndpoint']['browseEndpoint']['browseId'])
     
     
@@ -88,7 +89,7 @@ class Deserialise:
         videoData['shortDescription']                   =   raw['videoDetails']['shortDescription']
         videoData['viewCount']                          =   int(raw['videoDetails']['viewCount'])
 
-        videoData['thumbnail']                          =   thumbnail(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
+        videoData['thumbnail']                          =   img(**raw['videoDetails']['thumbnail']['thumbnails'][-1])
 
         videoData['isOwnerViewing']                     =   strbool(raw['videoDetails']['isOwnerViewing'])
         videoData['isCrawlable']                        =   strbool(raw['videoDetails']['isCrawlable']) 
@@ -250,3 +251,6 @@ class Deserialise:
 
                 DownloadableData.unmuxed.video.append(adaptiveVideoData)
         return DownloadableData
+    
+
+    channelHome=deserialise_channelDetails

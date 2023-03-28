@@ -39,3 +39,4 @@ def convert_to_number(input_string: str) -> float:
   
     # If there is no abbreviation, return the number as is
     return number
+  
