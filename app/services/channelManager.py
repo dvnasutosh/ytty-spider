@@ -34,8 +34,7 @@ class channelManager:
     def Details(self,channelId=str()):
         channelId=self.channelExists(channelId)
         raw=loads(self.browse(browseId=channelId).text)
-        return Deserialise.channelHome(raw)
-    
 
+        return Deserialise.channelHome(raw)
 
 
