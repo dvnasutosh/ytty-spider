@@ -1,5 +1,6 @@
 from flask import Flask,request,Response
 from app.services.videoManager import videoManager as vm
+from app.services.channelManager import channelManager as cm
 from app.RESTHandler.Validation import Options
 import json
 
@@ -101,8 +102,7 @@ def get_video_comments():
     elif request.method=='GET':
         video=vm()
     return {
-        'comments':video.comments(videoId=videoId,continuation=continuation).__raw__()
-}
+        'comments':video.comments(videoId=videoId,continuation=continuation).__raw__()}
 
 @app.route('/video/comments/reply',methods=['POST','GET'])
 def get_video_comments_reply():
@@ -141,5 +141,19 @@ def get_video_downloads():
         'download':video.Download().__raw__(),
     }
 
+# @app.route('/channel',method=['POST','GET'])
+
+@app.route('/channel/details',methods=['POST','GET'])
+def get_channel_details():
+    if request.args.keys().__len__()!=1 and "channelId" in request.args.keys():
+        return {"error":"Invalid query:only channelId allowed as param"}
+    
+    chObj=cm()
+    chDetails=chObj.Details(channelId=request.args['channelId'])
+    return {"channel_details":chDetails.__raw__()}
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002,debug=True)
+
+# TODO: Channel Home - > both continuation and basic content
+#  
