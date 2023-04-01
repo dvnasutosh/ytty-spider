@@ -1,7 +1,10 @@
-from app.type.common import img,strList,strbool,dateInt
-from app.dataHandler.helper import convert_to_number,filterInt
-from app.type.channel.Channel import tabEndpoints,Channel
-from app.type.channel.about import aboutChannel
+from app.dataclass.ChannelDataClasses.ChannelMeta import Channel, tabEndpoints
+from app.dataclass.common import dateInt, img, publishTime, strbool, strList, url
+from app.DataEngine.helper import convert_to_number, filterInt
+from app.dataclass.VideoDataClasses.videoMini import channelVideos, sort, videoMini
+from app.helperLib.time_to_seconds import t2sec
+import time
+
 def deserialise_channelDetails(raw:dict)->Channel:
     channelData=Channel()
     channelData['channelId']=str(raw['header']['c4TabbedHeaderRenderer']['channelId'])
@@ -24,6 +27,7 @@ def deserialise_channelDetails(raw:dict)->Channel:
     channelData['isunlisted']=strbool(raw['microformat']['microformatDataRenderer']['unlisted'])
     if 'tags' in raw['microformat']['microformatDataRenderer'].keys():
         channelData['tags']=strList(raw['microformat']['microformatDataRenderer']['tags'])
+        
     for endpoints in raw['contents']['twoColumnBrowseResultsRenderer']['tabs'][:-1:]:
             tab= tabEndpoints()
             tab['title']=str(endpoints['tabRenderer']['title'])
@@ -43,7 +47,13 @@ def deserialise_channelDetails(raw:dict)->Channel:
 
 def deserialise_channelHome(raw:dict):
     
-    raw['continuationContents']['sectionListContinuation']
+    sectionListContinuation=raw['continuationContents']['sectionListContinuation']
+    
+    for Section in sectionListContinuation['contents']:
+    # Getting into Item sections
+        Section['itemSectionRenderer']['itemSectionRenderer']
+        # channelFeaturedContentRenderer
+    
 def deserialise_channelAbout(raw:dict):
     content=raw['continuationContents']['sectionListContinuation']['contents'][0]['itemSectionRenderer']['contents'][0]
     
@@ -57,23 +67,61 @@ def deserialise_channelAbout(raw:dict):
     if 'country' in content.keys():
         aboutChannel['country']=str(content['country']['simpleText'])
     
-    # TODO: To be tested
-    # tabs=raw['contents']['twoColumnBrowseResultsRenderer']['tabs']
-    # tab =   [i for i in tabs if 'selected' in i['tabRenderer'].keys() and i['tabRenderer']['selected']=='true']
-    # content=tab[0]['tabRenderer']['content']['sectionListRenderer']['contents'][0]['channelAboutFullMetadataRenderer']
-    # aboutChannel=aboutChannel()
     return aboutChannel
 
-def deserialise_channelVideos(raw:dict):
-    tabs=   raw['contents']['twoColumnBrowseResultsRenderer']['tabs']
-    tab=   [i for i in tabs if 'selected' in i['tabRenderer'].keys() and i['tabRenderer']['selected']=='true']
+def deserialise_videoTiny(richItem:dict):
+    videoRender=richItem['richItemRenderer']['content']['videoRenderer']
+    videoData=videoMini()
     
-    contents=tab[0]['content']['richGridRenderer']['contents']
-    for video in contents:
-        video=video['richItemRenderer']['content']['videoRenderer']
-        # ['videoId']['thumbnail']['thumbnails'][-1]
-        
+    videoData.videoId                           =   str(videoRender['videoId'])
+    videoData.thumbnail                         =   img(**videoRender['thumbnail']['thumbnails'][-1])
+    videoData.title                             =   str(videoRender['title']['runs'][0]['text'])
+    videoData.length                            =   int(t2sec(videoRender['lengthText']['simpleText']))
+    videoData.viewCount                         =   filterInt((videoRender['viewCountText']['simpleText']))
+    print(videoRender.keys())
+    
+    if 'richThumbnail' in videoRender.keys():
+        videoData.preview                           =   url(videoRender['richThumbnail']['movingThumbnailRenderer']['movingThumbnailDetails']['thumbnails'][-1]['url'])
+    
+    videoData.publishedTime.publishedTimeText   =   videoRender['publishedTimeText']['simpleText']
+    videoData.publishedTime.since               =   time.time()
+    
+    if 'ownerBadges' in videoRender:
+        videoData.ownerBadges=True
+    return videoData
 
+
+def deserialise_channelVideos(raw:dict):
+    
+    richGrid=raw['continuationContents']['richGridContinuation']
+    chvdoData=channelVideos()
+        
+    # adding videos to the list
+    for richItem in richGrid['contents'][:-1:]:
+        
+        videoData=deserialise_videoTiny(richItem)
+        chvdoData.videos.append(videoData)
+        
+    if 'continuationItemRenderer' in richGrid['contents'][-1]:
+        chvdoData.videoContinuation=richGrid['contents'][-1]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
+    else:
+
+        videoData=deserialise_videoTiny(richItem)
+        chvdoData.videos.append(videoData)
+    
+    # Adding filteration and sort data
+    for continuation in richGrid['header']['feedFilterChipBarRenderer']['contents']:
+        if continuation['chipCloudChipRenderer']['text']['simpleText']=='Latest':
+            chvdoData.latestContinuation=continuation['chipCloudChipRenderer']['navigationEndpoint']['continuationCommand']['token']
+            if strbool(continuation['chipCloudChipRenderer']['isSelected']):
+                chvdoData.sortBy=sort.latest
+                
+        elif continuation['chipCloudChipRenderer']['text']['simpleText']=='Popular':
+            chvdoData.latestContinuation=continuation['chipCloudChipRenderer']['navigationEndpoint']['continuationCommand']['token']
+            if strbool(continuation['chipCloudChipRenderer']['isSelected']):
+                chvdoData.sortBy=sort.Popular
+         
+    return chvdoData
 
 
 

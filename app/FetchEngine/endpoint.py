@@ -1,8 +1,9 @@
 
-from app.fetchHandler.requests import endpoint_base,yt_requests,CONTEXT
-from app.authentication.auth import Authentication
-
 import json
+
+from app.authentication.auth import Authentication
+from app.FetchEngine.requests import CONTEXT, endpoint_base, yt_requests
+
 
 class next(yt_requests,endpoint_base):
     
@@ -26,7 +27,6 @@ class player(yt_requests,endpoint_base):
         self.raw=self.Fetch()
         return self.raw
 
-
 class search(yt_requests,endpoint_base):
     
     def __call__(self,query:str):
@@ -43,7 +43,7 @@ class browse(yt_requests,endpoint_base):
         elif not param and browseId:
             self.PAYLOAD.setUParam(browseId=browseId)
         else:
-            self.PAYLOAD.setUParam(browseId=browseId,param=param,continuation=continuation)
+            self.PAYLOAD.setUParam(browseId=browseId,params=param,continuation=continuation)
             
         self.raw=self.Fetch()
         return self.raw

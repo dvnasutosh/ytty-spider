@@ -1,5 +1,5 @@
-from app.type.Base import StrictDictionary
-from app.type.common import img,publishTime
+from app.dataclass.Base import StrictDictionary
+from app.dataclass.common import img,publishTime
 
 
 class authorSimple(StrictDictionary):

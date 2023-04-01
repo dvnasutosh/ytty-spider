@@ -1,4 +1,4 @@
-from app.type.Base import StrictDictionary
+from app.dataclass.Base import StrictDictionary
 
 class Interactions(StrictDictionary):
     """stores all interactions relative to a youtube video

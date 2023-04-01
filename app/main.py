@@ -1,11 +1,14 @@
-from flask import Flask,request,Response
-from app.services.videoManager import videoManager as vm
-from app.services.channelManager import channelManager as cm
-from app.RESTHandler.Validation import Options
 import json
 
+from flask import Flask, request
+
+from app.REST.Validation import Options
+from app.services.channelManager import channelManager as cm
+from app.services.videoManager import videoManager as vm
+from app.REST.Routes.channels import channel_routes
 app = Flask(__name__)
 
+app.register_blueprint(channel_routes)
 
 @app.route('/',methods=['POST','GET'])
 def home():
@@ -22,7 +25,7 @@ def get_video():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
 
         video=vm(videoId=request.args['videoId'],context=Opt())
     elif request.method=='GET':
@@ -44,7 +47,7 @@ def get_video_details():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
 
         video=vm(videoId=request.args['videoId'],context=Opt())
     elif request.method=='GET':
@@ -63,7 +66,7 @@ def get_video_interactions():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
 
         video=vm(videoId=request.args['videoId'],context=Opt())
     elif request.method=='GET':
@@ -97,7 +100,7 @@ def get_video_comments():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
         video=vm(context=Opt())
     elif request.method=='GET':
         video=vm()
@@ -112,7 +115,7 @@ def get_video_comments_reply():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
 
         video=vm(context=Opt())
     elif request.method=='GET':
@@ -131,7 +134,7 @@ def get_video_downloads():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
 
         video=vm(videoId=request.args['videoId'],context=Opt())
     elif request.method=='GET':
@@ -152,7 +155,7 @@ def get_channel_details():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
 
         chObj=cm(context=Opt())
         chDetails=chObj.Details(channelId=request.args['channelId'])
@@ -160,7 +163,7 @@ def get_channel_details():
         chObj=cm()
         chDetails=chObj.Details(channelId=request.args['channelId'])
     else:
-        return {Error:"GET OR POST ALLOWED ONLY."},400
+        return {"Error":"GET OR POST ALLOWED ONLY."},400
     
     return {"channel_details":chDetails.__raw__()}
 
@@ -173,7 +176,7 @@ def get_channel_home():
         try:
             Opt=Options(request.JSON)
         except TypeError as e:
-            return {Error:str(e)},400
+            return {"Error":str(e)},400
     
         chObj=cm(context=Opt())
         chDetails=chObj.Details(channelId=request.args['channelId'])
@@ -181,11 +184,13 @@ def get_channel_home():
         chObj=cm()
         chDetails=chObj.Details(channelId=request.args['channelId'])
     else:
-        return {Error:"GET OR POST ALLOWED ONLY."},400
+        return {"Error":"GET OR POST ALLOWED ONLY."},400
     
     return {"channel_details":chDetails.__raw__()}
 
 if __name__ == "__main__":
+    # data=(cm().Videos(channelId='UCttspZesZIDEwwpVIgoZtWQ'))
+    
     app.run(host="0.0.0.0", port=5002,debug=True)
 
 # TODO: Channel Home - > both continuation and basic content

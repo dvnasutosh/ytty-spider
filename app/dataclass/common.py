@@ -1,4 +1,6 @@
-from app.type.Base import StrictDictionary
+import datetime
+from urllib.parse import parse_qsl, urlparse
+from app.dataclass.Base import StrictDictionary
 import re
 
 class img(StrictDictionary):
@@ -98,7 +100,7 @@ class url(str):
             obj.query_params=dict()
             return obj
         if not isinstance(url_string, str):
-            raise TypeError(f"Expected str, but got {type(string).__name__}")
+            raise TypeError(f"Expected str, but got {type(url_string).__name__}")
         parsed_url = urlparse(url_string)
         if not all([parsed_url.scheme, parsed_url.netloc]):
             raise ValueError("Invalid URL")

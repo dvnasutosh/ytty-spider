@@ -2,7 +2,7 @@ from typing import Any,get_origin
 import typing
 import json
 from enum import Enum
-from app.common.to_dict import to_raw_dict
+from app.helperLib.to_dict import to_raw_dict
 
 class Dictionary:
     """

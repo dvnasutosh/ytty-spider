@@ -6,8 +6,8 @@ from enum import Enum
 import re
 import datetime
 
-from app.type.Base import StrictDictionary
-from app.type.common import img,strbool,strList,dateInt,url
+from app.dataclass.Base import StrictDictionary
+from app.dataclass.common import img,strbool,strList,dateInt,url
 
 class Sample(StrictDictionary):
     ss:List[str]

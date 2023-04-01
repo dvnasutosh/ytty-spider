@@ -1,5 +1,5 @@
-from app.type.Base import StrictDictionary
-from app.type.common import img,strbool,strList
+from app.dataclass.Base import StrictDictionary
+from app.dataclass.common import img,strbool,strList
 
 class tabEndpoints(StrictDictionary):
     title:str

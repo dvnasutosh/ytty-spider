@@ -1,21 +1,22 @@
 
-from app.type.Video import Video,liveBroadcast
-from app.type.common import img,strbool,strList,dateInt,url
-from app.type.Video import streaming, DownloadableMeta,Downloadables
+from app.dataclass.VideoDataClasses.Video import Video,liveBroadcast
+from app.dataclass.common import img,strbool,strList,dateInt,url
+from app.dataclass.VideoDataClasses.Video import streaming, DownloadableMeta,Downloadables
 
-from app.type.Video import adaptiveAudio, adaptiveVideo,adaptiveMeta
+from app.dataclass.VideoDataClasses.Video import adaptiveAudio, adaptiveVideo,adaptiveMeta
 
-from app.type.Video import mimeTypeExt,mimeType as T
-from app.type.Comments import Comment,CommentsList,continuationToken,Comments
+from app.dataclass.VideoDataClasses.Video import mimeTypeExt,mimeType as T
+from app.dataclass.VideoDataClasses.Comments import Comment,CommentsList,continuationToken,Comments
 
-from app.type.Interactions import Interactions
+from app.dataclass.VideoDataClasses.Interactions import Interactions
 
-import app.dataHandler.deserialiser.channelData as dsl
+import app.DataEngine.deserialiser.channelData as dsl
 
 from typing import Union
 import time
 import json
-from app.dataHandler.helper import filterInt,convert_to_number
+from app.DataEngine.helper import filterInt,convert_to_number
+from app.dataclass.VideoDataClasses.Comments import Comments
 
 def deserialise_mimeType(mime: str = str()):
         
@@ -84,7 +85,7 @@ class Deserialise:
         videoData['title']                              =   raw['videoDetails']['title']
         videoData['author']                             =   raw['videoDetails']['author']
         videoData['lengthSeconds']                      =   raw['videoDetails']['lengthSeconds']
-        videoData['keywords']                           =   strList(args=raw['videoDetails']['keywords']) if 'keywords' in raw['videoDetails'].keys() else keywordList()
+        videoData['keywords']                           =   strList(args=raw['videoDetails']['keywords']) if 'keywords' in raw['videoDetails'].keys() else strList()
         videoData['channelId']                          =   raw['videoDetails']['channelId']
         videoData['shortDescription']                   =   raw['videoDetails']['shortDescription']
         videoData['viewCount']                          =   int(raw['videoDetails']['viewCount'])
@@ -255,3 +256,4 @@ class Deserialise:
     def channelHome(raw:dict)-> dsl.Channel: ...
 
     channelHome=dsl.deserialise_channelDetails
+    channelVideo=dsl.deserialise_channelVideos
