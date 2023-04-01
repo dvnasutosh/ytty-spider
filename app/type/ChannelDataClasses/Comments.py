@@ -1,14 +1,12 @@
 from app.type.Base import StrictDictionary
-from app.type.common import img
+from app.type.common import img,publishTime
 
 
 class authorSimple(StrictDictionary):
     authorText:str
     authorThumbnail:img
     browseId:str
-class publishTime(StrictDictionary):
-    publishedTimeText:str
-    since:float
+
 
 class Comment(StrictDictionary):
     commentId:str

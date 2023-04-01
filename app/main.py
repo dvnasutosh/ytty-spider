@@ -145,11 +145,44 @@ def get_video_downloads():
 
 @app.route('/channel/details',methods=['POST','GET'])
 def get_channel_details():
-    if request.args.keys().__len__()!=1 and "channelId" in request.args.keys():
-        return {"error":"Invalid query:only channelId allowed as param"}
+    if 1<=request.args.keys().__len__()<3 and "channelId" in request.args.keys():
+        return {"error":"Invalid query: channelId neccesary"}
     
-    chObj=cm()
-    chDetails=chObj.Details(channelId=request.args['channelId'])
+    if request.method=='POST':
+        try:
+            Opt=Options(request.JSON)
+        except TypeError as e:
+            return {Error:str(e)},400
+
+        chObj=cm(context=Opt())
+        chDetails=chObj.Details(channelId=request.args['channelId'])
+    elif request.method=='GET':
+        chObj=cm()
+        chDetails=chObj.Details(channelId=request.args['channelId'])
+    else:
+        return {Error:"GET OR POST ALLOWED ONLY."},400
+    
+    return {"channel_details":chDetails.__raw__()}
+
+@app.route('/channel/home',methods=['POST','GET'])
+def get_channel_home():
+    if request.args.keys().__len__()!=1 and "params" in request.args.keys():
+        return {"error":"Invalid query: params essential as query"}
+    
+    if request.method=='POST':
+        try:
+            Opt=Options(request.JSON)
+        except TypeError as e:
+            return {Error:str(e)},400
+    
+        chObj=cm(context=Opt())
+        chDetails=chObj.Details(channelId=request.args['channelId'])
+    elif request.method=='GET':
+        chObj=cm()
+        chDetails=chObj.Details(channelId=request.args['channelId'])
+    else:
+        return {Error:"GET OR POST ALLOWED ONLY."},400
+    
     return {"channel_details":chDetails.__raw__()}
 
 if __name__ == "__main__":

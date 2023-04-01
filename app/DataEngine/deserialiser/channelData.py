@@ -1,8 +1,8 @@
-from app.type.common import img,strList,strbool
-from app.dataHandler.helper import convert_to_number
-from app.type.channel import tabEndpoints,Channel
-
-def deserialise_channelDetails(raw:dict):
+from app.type.common import img,strList,strbool,dateInt
+from app.dataHandler.helper import convert_to_number,filterInt
+from app.type.channel.Channel import tabEndpoints,Channel
+from app.type.channel.about import aboutChannel
+def deserialise_channelDetails(raw:dict)->Channel:
     channelData=Channel()
     channelData['channelId']=str(raw['header']['c4TabbedHeaderRenderer']['channelId'])
     channelData['title']=str(raw['header']['c4TabbedHeaderRenderer']['title'])
@@ -31,6 +31,7 @@ def deserialise_channelDetails(raw:dict):
             tab['params']=str(endpoints['tabRenderer']['endpoint']['browseEndpoint']['params'])
             
             channelData['tabs'].append(tab)
+            
     endpoints=raw['contents']['twoColumnBrowseResultsRenderer']['tabs'][-1]['expandableTabRenderer']
     tab= tabEndpoints()
     tab['title']=str(endpoints['title'])
@@ -39,3 +40,45 @@ def deserialise_channelDetails(raw:dict):
     channelData['tabs'].append(tab)
 
     return channelData
+
+def deserialise_channelHome(raw:dict):
+    
+    raw['continuationContents']['sectionListContinuation']
+def deserialise_channelAbout(raw:dict):
+    content=raw['continuationContents']['sectionListContinuation']['contents'][0]['itemSectionRenderer']['contents'][0]
+    
+    aboutChannel=aboutChannel()
+    if 'description' in content.keys():
+        aboutChannel['description']=str(content['description']['simpleText'])
+    if 'viewCountText' in content.keys():
+        aboutChannel['viewCount']=filterInt(content['viewCountText']['simpleText'])
+    if 'joinedDateText' in content.keys():
+        aboutChannel['joinedDate']=dateInt(content['joinedDateText']['runs'][-1]['text'])
+    if 'country' in content.keys():
+        aboutChannel['country']=str(content['country']['simpleText'])
+    
+    # TODO: To be tested
+    # tabs=raw['contents']['twoColumnBrowseResultsRenderer']['tabs']
+    # tab =   [i for i in tabs if 'selected' in i['tabRenderer'].keys() and i['tabRenderer']['selected']=='true']
+    # content=tab[0]['tabRenderer']['content']['sectionListRenderer']['contents'][0]['channelAboutFullMetadataRenderer']
+    # aboutChannel=aboutChannel()
+    return aboutChannel
+
+def deserialise_channelVideos(raw:dict):
+    tabs=   raw['contents']['twoColumnBrowseResultsRenderer']['tabs']
+    tab=   [i for i in tabs if 'selected' in i['tabRenderer'].keys() and i['tabRenderer']['selected']=='true']
+    
+    contents=tab[0]['content']['richGridRenderer']['contents']
+    for video in contents:
+        video=video['richItemRenderer']['content']['videoRenderer']
+        # ['videoId']['thumbnail']['thumbnails'][-1]
+        
+
+
+
+
+
+
+
+
+

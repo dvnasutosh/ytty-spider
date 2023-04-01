@@ -34,7 +34,23 @@ class channelManager:
     def Details(self,channelId=str()):
         channelId=self.channelExists(channelId)
         raw=loads(self.browse(browseId=channelId).text)
+        channelData-Deserialise.channelHome(raw)
+        self.tabs=dict()
+        return channelDa
+    def Home(self,channelId:str=str(),params:str=str()):
+        channelId=self.channelExists(channelId)
+        if not params:
+            if not self.params:
+                raise AttributeError(' `params` not found')
+            else: 
+                params=self.params
+        
+        
+        raw=loads(self.browse(browseId=channelId,params=params).text)
+        
 
-        return Deserialise.channelHome(raw)
-
-
+"""
+    {
+        Home
+    }
+"""

@@ -3,6 +3,7 @@ import typing
 import json
 from enum import Enum
 from app.common.to_dict import to_raw_dict
+
 class Dictionary:
     """
     A class that can be used to create a dictionary-like object with arbitrary key-value pairs.
@@ -30,7 +31,6 @@ class Dictionary:
         return str(self.__dict__)
     
     def __call__(self,raw:bool=False) -> dict:
-
         return self.__dict__ if not raw else self.__raw__()
     
     def __str__(self):
@@ -92,7 +92,7 @@ class StrictDictionary(Dictionary):
                 #   validation logic
                 #   Checking if expected_type is of Typing Class than converting it into it's base class
                 
-                expected_type=j if not get_origin(j) else get_origin(j)        
+                expected_type= j if not get_origin(j) else get_origin(j)        
                 #   Raise error if the given value is not of the expected type
                 if not isinstance(cls.__dict__[i],expected_type):
                     raise TypeError(

@@ -1,8 +1,8 @@
 
+import re
+
 def filterInt(s:str):
     return int(''.join([i for i in s if str.isdigit(i)]))
-
-import re
 
 def convert_to_number(input_string: str) -> float:
     # Work-around to handle missing data.

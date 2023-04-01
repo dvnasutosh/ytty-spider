@@ -21,6 +21,7 @@ class dateInt(int):
         
         Accepts date strings in the following formats:
         - 'YYYY-MM-DD'
+        - 'MMM DD, YYYY'
         - 'YYYY-MM-DDTHH:MM:SSZ'
         - 'YYYY-MM-DDTHH:MM:SS.sssZ'
         - 'YYYY-MM-DDTHH:MM:SS±HH:MM'
@@ -28,6 +29,7 @@ class dateInt(int):
         
         Examples:
         - '2023-03-10'
+        - 'Nov 17, 2012'
         - '2023-03-10T14:00:08+00:00'
         - '2023-03-10T14:00:08.999Z'
         - '2023-03-10T14:00:08-07:00'
@@ -39,6 +41,7 @@ class dateInt(int):
         ('%Y-%m-%dT%H:%M:%S.%f%z', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+\d{2}:\d{2}$')),
         ('%Y-%m-%dT%H:%M:%SZ', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')),
         ('%Y-%m-%dT%H:%M:%S%z', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$')),
+        ('%b %d, %Y', re.compile(r'[a-zA-Z]{3} \d{2}, \d{4}$')),
     ]
     
     def __new__(cls, date_str=None, default_value=-1):
@@ -75,6 +78,10 @@ class dateInt(int):
         """
         return datetime.datetime.fromtimestamp(self)
 
+class publishTime(StrictDictionary):
+    publishedTimeText:str
+    since:float
+    
 class strbool(int):
     def __new__(cls, value=bool()):
         if isinstance(value, str):

@@ -1,46 +1,9 @@
-import urllib.parse
-from urllib.parse import urlparse, parse_qsl
 
-from typing import List, Dict, Union, Any
+
 from enum import Enum
-import re
-import datetime
 
 from app.type.Base import StrictDictionary
-from app.type.common import img,strbool,strList,dateInt,url
-
-class liveBroadcast(StrictDictionary):
-    isLiveNow:strbool
-    startTimestamp:dateInt
-    endTimestamp:dateInt
-
-class Video(StrictDictionary):
-    videoId: str
-    title: str
-    author: str
-    lengthSeconds: str
-    keywords: strList
-    channelId: str
-    shortDescription: str
-    viewCount:int
-    thumbnail:img
-
-    isOwnerViewing: strbool
-    isCrawlable: strbool
-    allowRatings: strbool
-    isPrivate: strbool
-    isLiveContent: strbool
-    isFamilySafe: strbool
-
-    isUnlisted:strbool
-    hasYpcMetadata:strbool
-    category:str
-    publishDate:dateInt
-    uploadDate:dateInt
-    availableCountries:strList
-    liveBroadcastDetails:liveBroadcast
-    
-
+x
 class mimeType(Enum):
 
     unmuxedAudio='unmuxedAudio'
@@ -130,4 +93,3 @@ class Downloadables(StrictDictionary):
     since:float
     muxed:streamingList
     unmuxed:adaptiveList
-

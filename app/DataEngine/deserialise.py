@@ -10,7 +10,7 @@ from app.type.Comments import Comment,CommentsList,continuationToken,Comments
 
 from app.type.Interactions import Interactions
 
-from app.dataHandler.deserialiser.channelData import deserialise_channelDetails
+import app.dataHandler.deserialiser.channelData as dsl
 
 from typing import Union
 import time
@@ -252,5 +252,6 @@ class Deserialise:
                 DownloadableData.unmuxed.video.append(adaptiveVideoData)
         return DownloadableData
     
+    def channelHome(raw:dict)-> dsl.Channel: ...
 
-    channelHome=deserialise_channelDetails
+    channelHome=dsl.deserialise_channelDetails
