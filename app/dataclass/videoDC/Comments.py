@@ -29,4 +29,4 @@ class continuationToken(str):
 
 class Comments(StrictDictionary):
     count:int
-    List:List[Union(Comment,continuationToken)]
+    List:List[Union[Comment,continuationToken]]
