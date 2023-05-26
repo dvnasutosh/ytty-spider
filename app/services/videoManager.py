@@ -1,11 +1,11 @@
 from json import loads,dumps
 import time
+from app.Engines.DataEngine.deserialise import Deserialise
+from app.Engines.FetchEngine.endpoint import player,next
+from app.Engines.FetchEngine.requests import CONTEXT
 
 from app.authentication.auth import Authentication
-from app.FetchEngine.endpoint import next, player
-from app.FetchEngine.requests import CONTEXT,PF
 
-from app.DataEngine.deserialise import Deserialise
 
 
 
@@ -26,64 +26,65 @@ class videoManager:
         self.player.UpdateContext(context)
 
     def videoExists(self,videoId:str):
-        if not videoId:
-            if not self.videoId:
-                raise AttributeError('videoId Not set')
-            return self.videoId
-        else:
-            return videoId
 
-    def Details(self, videoId: str=str()):
-        
-        videoId=self.videoExists(videoId)
-        
-        return Deserialise.videoData(loads(self.player(videoId).text))
-    
-    def interactionData(self,videoId:str =str()):
-        videoId=self.videoExists(videoId)
-        
-        interactionData=Deserialise.interactionData( loads(self.next(videoId).text))
-        return interactionData
+        if videoId:
+            return videoId
+        if not self.videoId:
+            raise AttributeError('videoId Not set')
+        return self.videoId
 
     def setvideoId(self,videoId:str):
         self.videoId=videoId
-
-    def Download(self,videoId:str=str()):
-
+    
+    def Details(self, videoId: str=str()):
+        """
+        Returns video Details. 
+        """
         videoId=self.videoExists(videoId)
-
-        downloadRequest=player(self.auth,self.context)
         
-        #   Initial Requests
-        downloadRequest.UpdatePF(PF.ANDROID)
-        raw=loads(downloadRequest(videoId).content)
-
-        #   Handling 'LOGIN REQUIRED friends
-        if raw['playabilityStatus']['status']=='LOGIN_REQUIRED':
-            downloadRequest.UpdatePF(PF.TV)
-            raw=loads(downloadRequest(videoId).content)
-        if raw['playabilityStatus']['status']!='OK':
-            raise RuntimeError(f"Seems like there is a problem with youtube restriction in sending mp4 and mp4a data\n {raw['playabilityStatus']}")
+        return Deserialise.videoDetails(loads(self.player(videoId).text))
+    
+    # def interactionData(self,videoId:str =str()):
+    #     videoId=self.videoExists(videoId)
+    #     return Deserialise.interactionData( loads(self.next(videoId).text))
 
 
-        #   Handling CipherError
-        if 'signatureCipher' in raw['streamingData']['formats'][0].keys():
-            return 'cipheredData:Deciphering To be Implemented'
+    # def Download(self,videoId:str=str()):
+
+    #     videoId=self.videoExists(videoId)
+
+    #     downloadRequest=player(self.auth,self.context)
         
-        # Extracting Data
-        return Deserialise.streamingData(raw) 
-
-    def comments(self,videoId:str=str(),continuation:str=str(),continued=bool()):
-        if not continuation:
-            videoId=self.videoExists(videoId)
-            continuation=self.interactionData(videoId).comments_continuation
+    #     #   Initial Requests
+    #     downloadRequest.UpdatePF(PF.ANDROID)
+    #     raw=loads(downloadRequest(videoId).content)
         
-        self.next.UpdatePF(PF.WEB)
-        raw=self.next(videoId=videoId,continuation=continuation)
-        if continued:
-            return Deserialise.ContinuedComments(loads(raw.text))
-        else:
-            return Deserialise.Comments(loads(raw.text))
+    #     #   Handling 'LOGIN REQUIRED friends
+    #     if raw['playabilityStatus']['status']=='LOGIN_REQUIRED':
+    #         downloadRequest.UpdatePF(PF.TV)
+    #         raw=loads(downloadRequest(videoId).content)
+    #     if raw['playabilityStatus']['status']!='OK':
+    #         raise RuntimeError(f"Seems like there is a problem with youtube restriction in sending mp4 and mp4a data\n {raw['playabilityStatus']}")
+
+
+    #     #   Handling CipherError
+    #     if 'signatureCipher' in raw['streamingData']['formats'][0].keys():
+    #         return 'cipheredData:Deciphering To be Implemented'
+        
+    #     # Extracting Data
+    #     return Deserialise.streamingData(raw) 
+
+    # def comments(self,videoId:str=str(),continuation:str=str(),continued=bool()):
+    #     if not continuation:
+    #         videoId=self.videoExists(videoId)
+    #         continuation=self.interactionData(videoId).comments_continuation
+        
+    #     self.next.UpdatePF(PF.WEB)
+    #     raw=self.next(videoId=videoId,continuation=continuation)
+    #     if continued:
+    #         return Deserialise.ContinuedComments(loads(raw.text))
+    #     else:
+    #         return Deserialise.Comments(loads(raw.text))
     
 """
 
