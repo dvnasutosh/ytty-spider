@@ -32,4 +32,26 @@ def get_video_details():
     return {
         'details':video.Details()(True)
     }
+@video_routes.route('/video/interactions',methods=['POST','GET'])
+def get_video_interactions():
+    try:
+        args = Validate.video.Details(**request.args)
+        
+    except Exception as e:
+        return {"error":e},400
     
+    if not request.args:
+        return {"error":"videoId required"},400
+      
+    if request.method=='POST':
+        try:
+            Opt=Validate.Common.Options(request.JSON)
+        except TypeError as e:
+            return {"Error":str(e)},400
+        video=videoManager(videoId=request.args['videoId'],context=Opt())
+    elif request.method=='GET':
+        video=videoManager(videoId=request.args['videoId'])
+
+    return {
+        'interactions':video.interactionData()(True)
+        }

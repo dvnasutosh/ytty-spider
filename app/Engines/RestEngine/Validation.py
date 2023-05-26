@@ -1,4 +1,5 @@
 from betterdataclass.StrictDictionary import StrictDictionary,Dictionary
+from app.dataclass.videoDC.Interactions import Interactions
 
     
 class TabRoute(StrictDictionary):

@@ -44,9 +44,13 @@ class videoManager:
         
         return Deserialise.videoDetails(loads(self.player(videoId).text))
     
-    # def interactionData(self,videoId:str =str()):
-    #     videoId=self.videoExists(videoId)
-    #     return Deserialise.interactionData( loads(self.next(videoId).text))
+    def interactionData(self,videoId:str =str()):
+        """
+        Returns Interaction Details
+        """
+        videoId=self.videoExists(videoId)
+        
+        return Deserialise.interactionData( loads(self.next(videoId).text))
 
 
     # def Download(self,videoId:str=str()):

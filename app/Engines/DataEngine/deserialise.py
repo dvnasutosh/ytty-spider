@@ -11,8 +11,8 @@
 # from app.dataclass.videoDC.Download import DownloadableMeta, Downloadables, adaptiveAudio, adaptiveMeta, mimeTypeExt, streaming
 # from app.dataclass.videoDC.Interactions import Interactions
 # from app.dataclass.videoDC.Video import Video, liveBroadcast
-from app.Engines.DataEngine.deserialiser.video.details import deserialise_videoDetails
-from app.dataclass.videoDC.Video import Video
+from app.Engines.DataEngine.deserialiser.video.details import deserialise_interactionData, deserialise_videoDetails
+from app.dataclass.videoDC.Video import Interactions, Video
 
 
 # def deserialise_mimeType(mime: str = str()):
@@ -76,22 +76,14 @@ class Deserialise:
     @staticmethod
     def videoDetails(raw:dict) -> Video:...
     
+    @staticmethod
+    def interactionData(raw:dict) -> Interactions:...
+    
     
 Deserialise.videoDetails=deserialise_videoDetails
+Deserialise.interactionData=deserialise_interactionData
 
-    # @staticmethod
-    # def interactionData(raw:dict):
-    #     interactions=Interactions()
-    #     content=raw['contents']['twoColumnWatchNextResults']['results']['results']['contents']
-    #     # getting likes
-    #     filteredLikeSection=content[0]['videoPrimaryInfoRenderer']['videoActions']['menuRenderer']['topLevelButtons'][0]['segmentedLikeDislikeButtonRenderer']['likeButton']['toggleButtonRenderer']
-    #     # filtering like subtext
-    #     likeText=filteredLikeSection['defaultText']['accessibility']['accessibilityData']['label']
-        
-    #     interactions['likes']                           =       filterInt(likeText)    #Coz f* regex
-    #     interactions['comments_continuation']           =       content[3]['itemSectionRenderer']['contents'][0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
-        
-    #     return interactions
+
     
     # @staticmethod
     # def Comments(raw:dict):
