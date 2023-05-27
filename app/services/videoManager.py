@@ -2,7 +2,7 @@ from json import loads,dumps
 import time
 from app.Engines.DataEngine.deserialise import Deserialise
 from app.Engines.FetchEngine.endpoint import player,next
-from app.Engines.FetchEngine.requests import CONTEXT
+from app.Engines.FetchEngine.requests import CONTEXT, PF
 
 from app.authentication.auth import Authentication
 
@@ -51,7 +51,22 @@ class videoManager:
         videoId=self.videoExists(videoId)
         
         return Deserialise.interactionData( loads(self.next(videoId).text))
-
+    
+    def comments(self,videoId:str=str(),continuation:str=str(),continued=bool()):
+        if not continuation:
+            videoId=self.videoExists(videoId)
+            continuation=self.interactionData(videoId).comments_continuation
+        
+        self.next.UpdatePF(PF.WEB)
+        
+        raw=self.next(videoId=videoId,continuation=continuation)
+        # print(dumps(loads(raw.text),indent=4))
+        if continued or (loads(raw.text)['onResponseReceivedEndpoints'].__len__()==1):
+            return Deserialise.ContinuedComments(loads(raw.text))
+        else:
+            return Deserialise.comments(loads(raw.text))
+            # return loads(raw.text)
+    
 
     # def Download(self,videoId:str=str()):
 
@@ -78,17 +93,6 @@ class videoManager:
     #     # Extracting Data
     #     return Deserialise.streamingData(raw) 
 
-    # def comments(self,videoId:str=str(),continuation:str=str(),continued=bool()):
-    #     if not continuation:
-    #         videoId=self.videoExists(videoId)
-    #         continuation=self.interactionData(videoId).comments_continuation
-        
-    #     self.next.UpdatePF(PF.WEB)
-    #     raw=self.next(videoId=videoId,continuation=continuation)
-    #     if continued:
-    #         return Deserialise.ContinuedComments(loads(raw.text))
-    #     else:
-    #         return Deserialise.Comments(loads(raw.text))
     
 """
 

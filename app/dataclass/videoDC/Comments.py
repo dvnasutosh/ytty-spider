@@ -1,7 +1,7 @@
 
-from app.dataclass.common import img, publishTime
+from app.dataclass.common import img, publishTime, strbool
 from betterdataclass.StrictDictionary import StrictDictionary
-from typing import Union,List
+from typing import Dict, Optional, Union,List
 
 
 class authorSimple(StrictDictionary):
@@ -27,6 +27,12 @@ class continuationToken(str):
         return super().__new__(cls,data)
 
 
+class SortMember(StrictDictionary):
+    name:str
+    continuation:continuationToken
+    selected:strbool
+    
 class Comments(StrictDictionary):
-    count:int
-    List:List[Union[Comment,continuationToken]]
+    sortBy: Optional[List[SortMember]]
+    count: Optional[int]
+    Listed: List[Union[Comment,continuationToken]]

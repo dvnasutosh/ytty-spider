@@ -11,8 +11,13 @@
 # from app.dataclass.videoDC.Download import DownloadableMeta, Downloadables, adaptiveAudio, adaptiveMeta, mimeTypeExt, streaming
 # from app.dataclass.videoDC.Interactions import Interactions
 # from app.dataclass.videoDC.Video import Video, liveBroadcast
-from app.Engines.DataEngine.deserialiser.video.details import deserialise_interactionData, deserialise_videoDetails
+from app.Engines.DataEngine.deserialiser.video.details import (
+    deserialise_ContinuedComments, 
+    deserialise_comments, 
+    deserialise_interactionData, 
+    deserialise_videoDetails)
 from app.dataclass.videoDC.Video import Interactions, Video
+from app.dataclass.videoDC.Comments import Comments
 
 
 # def deserialise_mimeType(mime: str = str()):
@@ -41,37 +46,7 @@ from app.dataclass.videoDC.Video import Interactions, Video
 #             mimeType.Type=T.undefined
 #         return mimeType
 
-# def deserialise_comment(raw:str):
-
-#     commentRenderer         =   raw['commentThreadRenderer']['comment']['commentRenderer']
-    
-#     comment=Comment()
-    
-#     comment.commentId                               =   str(commentRenderer['commentId'])
-    
-#     for text in commentRenderer['contentText']['runs']:
-#         comment.text                                =   str(comment.text + (text['text']+" "))
-    
-#     comment.author.authorText                       =   str(commentRenderer['authorText']['simpleText'])
-#     comment.author.authorThumbnail                  =   img(**commentRenderer['authorThumbnail']['thumbnails'][-1])
-#     comment.author.browseId                         =   str(commentRenderer['authorEndpoint']['browseEndpoint']['browseId'])
-    
-    
-#     comment.publishedOn.publishedTimeText           =   str(commentRenderer['publishedTimeText']['runs'][0]['text'])
-#     comment.publishedOn.since                       =   float(time.time())
-    
-#     comment.isLiked                                 =   commentRenderer['isLiked']  == "true"
-#     comment.authorIsChannelOwner                    =   commentRenderer['authorIsChannelOwner'] == "true"
-    
-#     comment.voteStatus                              =   str(commentRenderer['voteStatus'])
-#     comment.voteCountApprox                         =   int(convert_to_number(commentRenderer['voteCount']['simpleText']))
-#     if 'replies' in raw['commentThreadRenderer'].keys():
-#         commentRepliesRenderer  =   raw['commentThreadRenderer']['replies']['commentRepliesRenderer']['contents']
-
-#         comment.replyContinuation                   =   commentRepliesRenderer[0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
-#         comment.replyCount                              =   int(commentRenderer['replyCount'])
-#     return comment
-    
+# 
 class Deserialise:
     @staticmethod
     def videoDetails(raw:dict) -> Video:...
@@ -79,47 +54,20 @@ class Deserialise:
     @staticmethod
     def interactionData(raw:dict) -> Interactions:...
     
+    @staticmethod
+    def comments(raw:dict)  -> Comments:...
+    
+    @staticmethod
+    def continuedComments(raw:dict)    -> Comments:...
+    
     
 Deserialise.videoDetails=deserialise_videoDetails
 Deserialise.interactionData=deserialise_interactionData
-
+Deserialise.continuedComments=deserialise_ContinuedComments
+Deserialise.comments=deserialise_comments
 
     
-    # @staticmethod
-    # def Comments(raw:dict):
-    #     CommentList=CommentsList()
-        
-    #     s=raw['onResponseReceivedEndpoints'][0]['reloadContinuationItemsCommand']['continuationItems'][0]['commentsHeaderRenderer']['countText']['runs'][0]['text']
-    #     count=filterInt(s)
-    #     Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][:-1:]
-        
-    #     for comRaw in Items:
-    #         CommentList.append(deserialise_comment(comRaw))
-        
-    #     #checking For final to be comment or continuation
-    #     Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][-1]
-    #     if 'continuationItemRenderer' in Items.keys():
-    #         CommentList.append( continuationToken(Items['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
 
-    #     elif 'commentThreadRenderer' in Items.keys():
-    #         CommentList.append(deserialise_comment(Items))
-    #         CommentList.append(continuationToken())
-    #     return Comments(count=count,List=CommentList)
-
-    # @staticmethod
-    # def ContinuedComments(raw:dict):
-    #     CommentList=CommentsList()
-    #     Items=raw['onResponseReceivedEndpoints'][0]['appendContinuationItemsAction']['continuationItems']
-        
-    #     for comRaw in Items[:-1:]:
-    #         CommentList.append(deserialise_comment(comRaw))
-    #     if 'continuationItemRenderer' in Items[-1].keys():
-    #         CommentList.append( continuationToken(Items[-1]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
-
-    #     elif 'commentThreadRenderer' in Items[-1].keys():
-    #         CommentList.append(deserialise_comment(Items[-1]))
-    #         CommentList.append(continuationToken())
-    #     return Comments(count=0,List=CommentList)
 
     # @staticmethod
     # def streamingData(raw:dict):

@@ -38,6 +38,15 @@ class Video(StrictDictionary):
     availableCountries:List[str]
     liveBroadcastDetails:liveBroadcast
 
+class Interactions(StrictDictionary):
+    """stores all interactions relative to a youtube video
+
+    Args:
+        StrictDictionary (dict): _description_
+    """
+    likes:int
+    comments_continuation:str
+
 class mimeType(Enum):
 
     unmuxedAudio='unmuxedAudio'

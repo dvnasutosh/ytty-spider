@@ -1,19 +1,12 @@
 import datetime
 from urllib.parse import parse_qsl, urlparse
-from app.dataclass.Base import StrictDictionary
+from betterdataclass.StrictDictionary import StrictDictionary
 import re
 
 class img(StrictDictionary):
     url:str
     width:int
     height:int
-
-class strList(list):
-    def __init__(self,args:list=list()):
-        if not all([isinstance(i, str) for i in args]):
-            raise ValueError('keywordList will need to have "str" type items only')
-        super().__init__(args)
-
 
 class dateInt(int):
     
@@ -97,7 +90,7 @@ class url(str):
     def __new__(cls, url_string=str()):
         if not url_string:
             obj=super().__new__(cls,url_string)
-            obj.query_params=dict()
+            obj.query_params = {}
             return obj
         if not isinstance(url_string, str):
             raise TypeError(f"Expected str, but got {type(url_string).__name__}")
@@ -107,16 +100,4 @@ class url(str):
         obj = super().__new__(cls, url_string)
         obj.query_params = dict(parse_qsl(parsed_url.query))
         return obj
-
-    @staticmethod
-    def is_valid_url(url_string):
-        regex = re.compile(
-            r"^(?:http|ftp)s?://"  # http:// or https:// or ftp:// or ftps://
-            # domain...
-            r"(?:[A-Za-z0-9]+(?:[-._][A-Za-z0-9]+)*\.)+[A-Za-z]{2,}"
-            # port...
-            r"(?::\d{2,5})?"
-            # path...
-            r"(?:/.*)?$",
-            re.IGNORECASE
-        )
+    
