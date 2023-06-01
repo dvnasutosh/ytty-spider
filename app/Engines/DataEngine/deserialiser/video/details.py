@@ -93,10 +93,10 @@ def deserialise_comment(raw:dict):
         commentRepliesRenderer                      =   raw['commentThreadRenderer']['replies']['commentRepliesRenderer']['contents']
         comment.replyContinuation                   =   commentRepliesRenderer[0]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token']
         comment.replyCount                          =   int(commentRenderer['replyCount'])
-    # print(comment())
+
     return comment
     
-def deserialise_comments(raw:dict)-> Comments:
+def deserialise_comments(raw:dict) -> Comments:
     """
     Deserialise all initial or top comments of video
     """
@@ -106,34 +106,35 @@ def deserialise_comments(raw:dict)-> Comments:
     likeText=raw['onResponseReceivedEndpoints'][0]['reloadContinuationItemsCommand']['continuationItems'][0]['commentsHeaderRenderer']['countText']['runs'][0]['text']
     CommentList.count=filterInt(likeText)
     CommentList.sortBy=[]
-    
     # Extracting Sortable data
     SortDataRaw= raw['onResponseReceivedEndpoints'][0]['reloadContinuationItemsCommand']['continuationItems'][0]['commentsHeaderRenderer']['sortMenu']['sortFilterSubMenuRenderer']['subMenuItems']
+    l=[]
     for each in SortDataRaw:
         SortData= SortMember()
         SortData.name                               =   str(each['title'])
         SortData.selected                           =   strbool(each['selected'])
         SortData.continuation                       =   continuationToken(each['serviceEndpoint']['continuationCommand']['token'])
-        CommentList.sortBy.append(SortData)
-    
+        l.append(SortData)
+    CommentList.sortBy=l
+
     # Extracting Comment Details
     Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][:-1:]
+    l = [deserialise_comment(comRaw) for comRaw in Items]   # Because StrictDictionary list append doesn't work as expected
     
-    for comRaw in Items:
-        CommentList.Listed.append(deserialise_comment(comRaw))
-    for comment in CommentList.Listed:
-        print(comment.author.authorText)
+    # for comment in CommentList.Listed:
+    #     print(comment.author.authorText)
 
-        
+
     #checking For final to be comment or continuation
     Items=raw['onResponseReceivedEndpoints'][1]['reloadContinuationItemsCommand']['continuationItems'][-1]
     if 'continuationItemRenderer' in Items.keys():
-        CommentList.Listed.append( continuationToken(Items['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
+        l.append( continuationToken(Items['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
 
     elif 'commentThreadRenderer' in Items.keys():
-        CommentList.Listed.append(deserialise_comment(Items))
-        CommentList.Listed.append(continuationToken())
-
+        l.append(deserialise_comment(Items))
+        l.append(continuationToken())
+    
+    CommentList.Listed=l
     return CommentList
 
 def deserialise_ContinuedComments(raw:dict):
@@ -143,16 +144,13 @@ def deserialise_ContinuedComments(raw:dict):
 
     Comment=Comments()
     Items=raw['onResponseReceivedEndpoints'][0]['appendContinuationItemsAction']['continuationItems']
-    
-    for comRaw in Items[:-1:]:
-        Comment.Listed.append(deserialise_comment(comRaw))
+    l = [deserialise_comment(comRaw) for comRaw in Items[:-1:]]
     
     if 'continuationItemRenderer' in Items[-1].keys():
-        Comment.Listed.append( continuationToken(Items[-1]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
+        l.append( continuationToken(Items[-1]['continuationItemRenderer']['continuationEndpoint']['continuationCommand']['token'])    )
 
     elif 'commentThreadRenderer' in Items[-1].keys():
-        Comment.Listed.append(deserialise_comment(Items[-1]))
-        Comment.Listed.append(continuationToken())
-    
+        l.extend((deserialise_comment(Items[-1]), continuationToken()))
+    Comments.Listed=l
     return Comment
 
