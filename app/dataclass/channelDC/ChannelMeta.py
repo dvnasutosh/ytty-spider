@@ -2,7 +2,7 @@ from typing import List, Union
 from betterdataclass.StrictDictionary import StrictDictionary
 from betterdataclass.StrictList import StrictList
 
-from app.dataclass.common import img,strbool,List[str]
+from app.dataclass.common import img,strbool
 from app.Engines.FetchEngine.endpoint import browse
 
 class browseEndpoint(StrictDictionary):
