@@ -1,5 +1,5 @@
 from betterdataclass.StrictDictionary import StrictDictionary
-from app.dataclass.ChannelDataClasses.ChannelMeta import browseEndpoint
+from .ChannelMeta import browseEndpoint
 
 class ShelfDetails(StrictDictionary):
     title           :   str
