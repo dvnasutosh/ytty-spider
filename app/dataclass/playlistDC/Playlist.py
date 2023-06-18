@@ -1,7 +1,5 @@
 from betterdataclass.StrictDictionary import StrictDictionary
-from app.dataclass.common import img, strbool
-from app.dataclass.ChannelDataClasses.ChannelMeta import browseEndpoint
-
+from app.dataclass.common import img, strbool, browseEndpoint
 class Playlist(StrictDictionary):
     title:str
     playlistId:str
@@ -17,7 +15,7 @@ class Playlist(StrictDictionary):
 
 class PlaylistMini(StrictDictionary):
     ownerBadges:bool
-    playlistId:bool
+    playlistId:str
     thumbnail:img
     title:str
     videosCount:int

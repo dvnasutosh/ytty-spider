@@ -1,45 +1,20 @@
-from typing import List, Union
+from typing import List, Optional, Union
+from app.dataclass.channelDC.Community import Post
+from app.dataclass.channelDC.Shelf import ShelfDetails
+from app.dataclass.channelDC.about import aboutChannel
+from app.dataclass.channelDC.store import Product
+from app.dataclass.playlistDC.Playlist import PlaylistMini
+from app.dataclass.videoDC.videoMini import videoMini
 from betterdataclass.StrictDictionary import StrictDictionary
 from betterdataclass.StrictList import StrictList
+from app.dataclass.common import img,strbool,browseEndpoint
 
-from app.dataclass.common import img,strbool
-from app.Engines.FetchEngine.endpoint import browse
 
-class browseEndpoint(StrictDictionary):
-    browseId:str
-    params:str
-    canonicalBaseUrl:str
     
 class tabEndpoints(StrictDictionary):
     title:str
     selected:strbool
     browseEndpoint:browseEndpoint
-
-class tabEndpointsList(StrictList):
-    types=[tabEndpoints]
-
-
-class tabData(StrictDictionary):
-    tabs:List[tabEndpoints]
-    content:List
-
-class Channel(StrictDictionary):
-    channelId:str
-    title:str
-    banner:img
-    tvBanner:img
-    channelHandle:str
-    tagline:str
-    subscriberCountApprox:float
-    videosCount:int
-    description:str
-    avatar:img
-    availableCountry:List[str]
-    isFamilySafe:strbool
-    isnoindex:strbool
-    isunlisted:strbool
-    tags:List[str]
-    tabs:tabEndpointsList
 
 class channelMini(StrictDictionary):
     channelId:str
@@ -48,4 +23,43 @@ class channelMini(StrictDictionary):
     videoCount:int
     subscriberCount:int
     isVerified:bool    
+
+class Sort(StrictDictionary):
+    continuation:str
+    isSelected:strbool
+    sortType:str
     
+class Content(StrictDictionary):
+    data: List[Union[videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]]
+    sort: Optional[List[Sort]]
+
+class contentList(StrictList): #list
+    types= [Content,videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]
+
+    
+    
+
+class tabData(StrictDictionary):
+    tabs: List[tabEndpoints]
+    content: contentList
+
+class Channel(StrictDictionary):
+    channelId: str
+    title: str
+    banner: img
+    tvBanner: img
+    channelHandle: str
+    tagline: str
+    subscriberCountApprox: float
+    videosCount: int
+    description: str
+    avatar: img
+    availableCountry: List[str]
+    
+    isFamilySafe: strbool
+    isnoindex: strbool
+    isunlisted: strbool
+    isVerified: bool
+    tags: List[str]
+    tabs: tabData
+

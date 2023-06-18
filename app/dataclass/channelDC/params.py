@@ -1,5 +1,5 @@
 import enum
-from typing import enum
+
 
 class Params(enum.StrEnum):
     Home        ="EghmZWF0dXJlZPIGBAoCMgA"
@@ -11,7 +11,7 @@ class Params(enum.StrEnum):
     About       ="EgVhYm91dPIGBAoCEgA"
     Live        ="EgdzdHJlYW1z8gYECgJ6AA"
     Store       ="EgVzdG9yZfIGBAoCGgA"
-    
+    releases    ="EghyZWxlYXNlc_IGBQoDsgEA"
     "EghjaGFubmVscyAxcAzyBgkKB1IAogECCAE%3D"
     
     # REVIEW: UCDvybSMffAY5iMm7kNTw_ow a video less short filled channel

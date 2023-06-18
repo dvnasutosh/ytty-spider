@@ -1,12 +1,12 @@
 
 
 from enum import Enum
-from typing import Literal, List
-from app.Engines.FetchEngine.requests import URL
+from typing import List
+
 
 from betterdataclass.StrictDictionary import StrictDictionary
 
-mimeTypeOptions=Literal['unmuxedAudio','unmuxedVideo','muxedVideo','undefined']
+from ..common import url
 class mimeType(Enum):
 
     unmuxedAudio='unmuxedAudio'
@@ -16,20 +16,19 @@ class mimeType(Enum):
     default='undefined'
 
 class mimeTypeExt(StrictDictionary):
-    Type:mimeTypeOptions
+    Type:mimeType
     label:str
     codec:List[str]
 
 class DownloadableMeta(StrictDictionary):
     itag:int
-    url:URL
+    url:url
     mimeType:mimeTypeExt
     bitrate:int
     lastModified:int
     quality:str
     projectionType:str
     approxDurationMs:int
-
 
 class videoMeta(StrictDictionary):
     width:int
@@ -58,41 +57,24 @@ class streaming(StrictDictionary):
     videoMeta:videoMeta
     audioMeta:audioMeta
 
-class streamingList(list):
-    def __init__(self,args:list=list()):
-        if not all([isinstance(i, streaming) for i in args]):
-            raise ValueError('streamingList will need to have "streaming" type items only')
-        super().__init__(args)
 
 class adaptiveVideo(StrictDictionary):
     Download:DownloadableMeta
     videoMeta:videoMeta
     adaptiveMeta:adaptiveMeta
 
-class adaptiveVideoList(list):
-    def __init__(self,args:list=list()):
-        if not all([isinstance(i, adaptiveVideo) for i in args]):
-            raise ValueError('adaptiveVideoList will need to have "adaptiveVideo" type items only')
-        super().__init__(args)
-
 class adaptiveAudio(StrictDictionary):
     Download:DownloadableMeta
     audioMeta:audioMeta
     adaptiveMeta:adaptiveMeta
 
-class adaptiveAudioList(list):
-    def __init__(self,args:list=list()):
-        if not all([isinstance(i, adaptiveAudio) for i in args]):
-            raise ValueError('adaptiveAudioList will need to have "adaptiveAudio" type items only')
-        super().__init__(args)
-
 
 class adaptiveList(StrictDictionary):
-    audio:adaptiveAudioList
-    video:adaptiveVideoList
+    audio:List[adaptiveAudio]
+    video:List[adaptiveVideo]
 
 class Downloadables(StrictDictionary):
     expiresInSeconds:int
     since:float
-    muxed:streamingList
+    muxed:List[streaming]
     unmuxed:adaptiveList

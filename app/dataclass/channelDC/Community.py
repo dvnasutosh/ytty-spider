@@ -1,7 +1,9 @@
-from app.dataclass.common import img, publishTime
-from app.dataclass.ChannelDataClasses.ChannelMeta import browseEndpoint
-from betterdataclass.StrictDictionary import StrictDictionary,StrictList
-from app.dataclass.VideoDataClasses.videoMini import sort, videoMini
+from typing import Optional
+from app.dataclass.common import img, publishTime,browseEndpoint
+
+from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclass.StrictList import StrictList
+from app.dataclass.videoDC.videoMini import sort, videoMini
 
 class Choice(StrictDictionary):
     label:str
@@ -35,6 +37,6 @@ class Post(StrictDictionary):
     commentCountApprox:int
     commentEndpoint:browseEndpoint
     
-    image:img
-    poll:Poll
-    video:videoMini
+    image:Optional[img]
+    poll:Optional[Poll]
+    video:Optional[videoMini]

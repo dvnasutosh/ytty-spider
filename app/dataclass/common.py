@@ -100,4 +100,8 @@ class url(str):
         obj = super().__new__(cls, url_string)
         obj.query_params = dict(parse_qsl(parsed_url.query))
         return obj
-    
+
+class browseEndpoint(StrictDictionary):
+    browseId:str
+    params:str
+    canonicalBaseUrl:str

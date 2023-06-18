@@ -1,2 +1,0 @@
-from betterdataclass.StrictDictionary import StrictDictionary
-
