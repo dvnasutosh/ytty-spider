@@ -20,7 +20,6 @@ def get_video_details():
     
     if not request.args:
         return {"error":"videoId required"},400
-      
     if request.method=='POST':
         try:
             Opt=Validate.Common.Options(request.JSON)
@@ -45,7 +44,7 @@ def get_video_interactions():
     
     if not request.args:
         return {"error":"videoId required"},400
-      
+    
     if request.method=='POST':
         try:
             Opt=Validate.Common.Options(request.JSON)
@@ -64,6 +63,7 @@ def get_video_interactions():
 def get_video_comments():
     
     # Route Validation
+    
     try:
         args = Validate.video.Comments(**request.args)
     except Exception as e:
@@ -80,13 +80,63 @@ def get_video_comments():
         video=videoManager(context=Opt())
     elif request.method=='GET':
         video=videoManager()
-    # print()
-    # print()
-    # print()
-    # print(video.comments(**args())())
-    # print()
-    # print()
-    # print()
+
     return {
-        # 'comments':video.comments(**args())}
+
         'comments':video.comments(**args())(True)}
+    
+@video_routes.route('/video/comments/reply',methods=['POST','GET'])
+def get_video_comments_reply():
+    """
+        - Not a necessary route. everything comments related can be attained from /video/comments
+    """
+    try:
+        args = Validate.video.Comments(**request.args)
+        if not (args.continuation):
+            raise AttributeError("videoId not allowed while fetching reply")
+    except Exception as e:
+        return {"error":e},400
+    
+    if request.args.keys().__len__()!=1 or 'continuation' not in request.args.keys():
+        return {"error":"Invalid query:Only continuation allowed as param"},400
+    if request.method=='POST':
+        try:
+            Opt=Validate.Common.Options(request.JSON)
+        except TypeError as e:
+            return {"Error":str(e)},400
+
+        video=videoManager(context=Opt())
+    elif request.method=='GET':
+        video=videoManager()
+
+    return {
+        'reply':video.comments(continuation=args['continuation'],continued=True)(True)
+        }
+
+
+@video_routes.route('/video/downloads',methods=['POST','GET'])
+def get_video_downloads():
+    
+    try:
+        args = Validate.video.Details(**request.args)
+    
+    except Exception as e:
+        return {"error":e},400
+    
+    if request.method=='POST':
+        try:
+            Opt=Validate.Common.Options(request.JSON)
+        except TypeError as e:
+            return {"Error":str(e)},400
+
+        video=videoManager(videoId=request.args['videoId'],context=Opt())
+    
+    elif request.method=='GET':
+        video=videoManager(videoId=request.args['videoId'])
+    print('REST 3/4')
+    
+    return {
+        'download':video.Download()(True),
+    }
+
+

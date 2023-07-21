@@ -1,11 +1,14 @@
 from json import loads, dumps
 import time
+
+
 from app.Engines.DataEngine.deserialise import Deserialise
+from app.Engines.DataEngine.deserialiser.video.download import insert_url
 from app.Engines.FetchEngine.endpoint import player, next
 from app.Engines.FetchEngine.requests import CONTEXT, PF
 
 from app.authentication.auth import Authentication
-
+from pytube import YouTube
 
 class videoManager:
     def __init__(self, videoId: str = None, auth: Authentication = Authentication(), context: CONTEXT = CONTEXT()):
@@ -44,13 +47,14 @@ class videoManager:
 
     def interactionData(self, videoId: str = str()):
         """
-        Returns Interaction Details
+        - Returns: `Interaction` Details
         """
         videoId = self.videoExists(videoId)
 
         return Deserialise.interactionData(loads(self.next(videoId).text))
 
     def comments(self, videoId: str = str(), continuation: str = str(), continued=bool()):
+        
         if not continuation:
             videoId = self.videoExists(videoId)
             continuation = self.interactionData(videoId).comments_continuation
@@ -64,31 +68,32 @@ class videoManager:
         else:
             return Deserialise.comments(loads(raw.text))
 
-    # def Download(self,videoId:str=str()):
+    def Download(self,videoId:str=str()):
 
-    #     videoId=self.videoExists(videoId)
+        videoId=self.videoExists(videoId)
 
-    #     downloadRequest=player(self.auth,self.context)
+        downloadRequest=player(self.auth,self.context)
 
-    #     #   Initial Requests
-    #     downloadRequest.UpdatePF(PF.ANDROID)
-    #     raw=loads(downloadRequest(videoId).content)
+        #   Initial Requests
+        downloadRequest.UpdatePF(PF.WEB)
+        raw=loads(downloadRequest(videoId).content)
 
-    #     #   Handling 'LOGIN REQUIRED friends
-    #     if raw['playabilityStatus']['status']=='LOGIN_REQUIRED':
-    #         downloadRequest.UpdatePF(PF.TV)
-    #         raw=loads(downloadRequest(videoId).content)
-    #     if raw['playabilityStatus']['status']!='OK':
-    #         raise RuntimeError(f"Seems like there is a problem with youtube restriction in sending mp4 and mp4a data\n {raw['playabilityStatus']}")
+        #   Handling 'LOGIN REQUIRED' friends
+        if raw['playabilityStatus']['status']=='LOGIN_REQUIRED':
+            downloadRequest.UpdatePF(PF.TV)
 
-    #     #   Handling CipherError
-    #     if 'signatureCipher' in raw['streamingData']['formats'][0].keys():
-    #         return 'cipheredData:Deciphering To be Implemented'
+            raw=loads(downloadRequest(videoId).content)
 
-    #     # Extracting Data
-    #     return Deserialise.streamingData(raw)
-
-
+        #   Handling CipherError and all other error
+        if raw['playabilityStatus']['status']!='OK' or 'signatureCipher' in raw['streamingData']['formats'][0].keys():
+            print('hello2222')
+            return insert_url(
+                pytubeData=YouTube(f'https://www.youtube.com/watch?v={videoId}').streaming_data,
+                structuredData=Deserialise.streamingData(raw))
+        
+        # Extracting Data
+        return Deserialise.streamingData(raw)
+    
 """
 
 Sample videoIds

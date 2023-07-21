@@ -1,11 +1,13 @@
 
+
 import time
+from typing import List
 from app.dataclass.videoDC.Download import (
     Downloadables,streaming , DownloadableMeta, adaptiveMeta, adaptiveVideo, adaptiveAudio,
     mimeType, mimeTypeExt
     )
 from app.dataclass.common import url
-from json import loads
+from json import dumps, loads
 
 def deserialise_mimeType(mime: str = str()):
 
@@ -33,6 +35,7 @@ def deserialise_mimeType(mime: str = str()):
             mimeTypeData.Type=mimeType.undefined
         return mimeTypeData
 
+
 def deserialise_streamingData(raw:dict):
         #SECTION: Type Checking For attribute
         try:
@@ -56,7 +59,8 @@ def deserialise_streamingData(raw:dict):
         for rawItem in raw['streamingData']['formats']:
             streamItem=streaming()
             streamItem.Download.itag                =   int(rawItem['itag'])
-            streamItem.Download.url                 =   url(rawItem['url'])
+            if 'url' in rawItem:
+                streamItem.Download.url                 =   url(rawItem['url'])
             
             streamItem.Download.mimeType                    =   deserialise_mimeType(mime=rawItem['mimeType'])
             
@@ -82,7 +86,10 @@ def deserialise_streamingData(raw:dict):
             adaptive=adaptiveMeta()
 
             commonMeta.itag                                 =       int(rawItem['itag'])
-            commonMeta.url                                  =       url(rawItem['url'])
+            
+            if 'url' in rawItem:
+                commonMeta.url                              =       url(rawItem['url'])
+            
             commonMeta.mimeType                             =       deserialise_mimeType(mime=rawItem['mimeType'])
             commonMeta.bitrate                              =       int(rawItem['bitrate'])
             commonMeta.lastModified                         =       int(rawItem['lastModified'])
@@ -111,8 +118,8 @@ def deserialise_streamingData(raw:dict):
             
             elif commonMeta.mimeType.Type == mimeType.unmuxedVideo:
                 adaptiveVideoData               =        adaptiveVideo()
-                adaptiveVideoData.Download      =       commonMeta
-                adaptiveVideoData.adaptiveMeta  =       adaptive
+                adaptiveVideoData.Download      =        commonMeta
+                adaptiveVideoData.adaptiveMeta  =        adaptive
                 
                 adaptiveVideoData.videoMeta.width           =       int(rawItem['width'])
                 adaptiveVideoData.videoMeta.height          =       int(rawItem['height'])
@@ -121,3 +128,28 @@ def deserialise_streamingData(raw:dict):
 
                 DownloadableData.unmuxed.video.append(adaptiveVideoData)
         return DownloadableData
+
+def insert_url(pytubeData:List[dict],structuredData:Downloadables):
+    
+    for i in pytubeData['formats']+pytubeData['adaptiveFormats']:
+        mime=deserialise_mimeType(i['mimeType'])
+        
+        if (mime.Type==mimeType.muxedVideo):
+            for j in range(len(structuredData.muxed)):
+                if structuredData.muxed[j].Download.itag == int(i['itag']):
+                    structuredData.muxed[j].Download.url=url(i['url'])
+            print('donemux')
+        elif (mime.Type==mimeType.unmuxedAudio):
+            for j in range(len(structuredData.unmuxed.audio)):
+                if structuredData.unmuxed.audio[j].Download.itag == int(i['itag']):
+                    structuredData.unmuxed.audio[j].Download.url=url(i['url'])
+            print('doneaunmux')
+                    
+        elif (mime.Type==mimeType.unmuxedVideo):
+            for j in range(len(structuredData.unmuxed.video)):
+                if structuredData.unmuxed.video[j].Download.itag == int(i['itag']):
+                    
+                    structuredData.unmuxed.video[j].Download.url=url(i['url'])
+            print('doneviunmux')
+
+    return structuredData
