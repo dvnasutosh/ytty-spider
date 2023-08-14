@@ -1,3 +1,4 @@
+from typing import Union
 from app.Engines.FetchEngine.endpoint import browse
 from app.authentication.auth import Authentication
 from app.Engines.FetchEngine.requests import CONTEXT,PF
@@ -34,55 +35,19 @@ class channelManager:
     
     def Details(self,channelId=str()):
         channelId=self.channelExists(channelId)
-        raw=loads(self.browse(browseId=channelId).text)
-        channelData=Deserialise.channelHome(raw)
+        raw=loads(self.browse(browseId=channelId,params=Params.About).text)
+        channelData=Deserialise.channelTabs(raw)
         self.tabs = {}
         return channelData
     
-    def Home(self,channelId:str=str(),params:str=str()):
-        channelId=self.channelExists(channelId)
-        if not params and not self.params:
-            params=self.params=Params.Home
-        else: 
-            params=self.params
+    def Tabs(self,browseID:str=str(),params: Union[str,Params]=''):
         
-        
-        raw=loads(self.browse(browseId=channelId,params=params).text)
-
-    def Videos(self,channelId:str=str(),params:str=str()):
-        if not params:
-            if self.params:
-                params=self.params
-
-            else:
-                self.params=params=Params.Videos.value
-        # Checking whether channelId is given
-        channelId=self.channelExists(channelId)
-
-        raw=loads(self.browse(browseId=channelId,param=params).text)
-        Details=Deserialise.channelDetails(raw)
-        Tabs=Deserialise.channelTabs(raw)
-
-
-        return Deserialise.channelVideo(raw)
-    
-    def Shorts(self,channelId:str=str(),params:str=str()):
-        if not params:
-            if self.params:
-                params=self.params
-            else:
-                self.params=params=Params.Shorts.value
-        
-    def Tab(self, browse:browseEndpoint):
-        raw=loads(self.browse(**browse.__raw__()).text)
+        browseID=self.channelExists(browseID)
+        raw=loads(self.browse(browseId=browseID,params=params).text)
         channelDetails=Deserialise.channelDetails(raw)
         channelTabs=Deserialise.channelTabs(raw)
-        return channelTabs
-        
-    
 
-"""
-    {
-        Home
-    }
-"""
+        return {
+                'channelDetails': channelDetails.__raw__(),
+                'tabData': channelTabs.__raw__()
+            }

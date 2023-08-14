@@ -86,7 +86,6 @@ class videoManager:
 
         #   Handling CipherError and all other error
         if raw['playabilityStatus']['status']!='OK' or 'signatureCipher' in raw['streamingData']['formats'][0].keys():
-            print('hello2222')
             return insert_url(
                 pytubeData=YouTube(f'https://www.youtube.com/watch?v={videoId}').streaming_data,
                 structuredData=Deserialise.streamingData(raw))

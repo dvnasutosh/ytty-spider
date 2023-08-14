@@ -6,7 +6,7 @@ def filterInt(s:str):
 
 def convert_to_number(input_string: str) -> float:
     # Work-around to handle missing data.
-    if input_string == '':
+    if not input_string:
         return -1.0
 
     # Define the regular expression pattern to match the input string

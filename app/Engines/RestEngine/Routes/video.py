@@ -1,7 +1,6 @@
 # from app.Engines.RestEngine.Validation import Options
 # from app.services.videoManager import videoManager as vm
-from ast import arg
-from math import e
+
 from flask import Blueprint, request
 from app.Engines.RestEngine.Validation import Validate
 from app.dataclass.videoDC.Comments import Comments
@@ -84,7 +83,7 @@ def get_video_comments():
     return {
 
         'comments':video.comments(**args())(True)}
-    
+
 @video_routes.route('/video/comments/reply',methods=['POST','GET'])
 def get_video_comments_reply():
     """
@@ -133,7 +132,6 @@ def get_video_downloads():
     
     elif request.method=='GET':
         video=videoManager(videoId=request.args['videoId'])
-    print('REST 3/4')
     
     return {
         'download':video.Download()(True),

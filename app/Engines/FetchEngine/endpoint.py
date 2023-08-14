@@ -8,7 +8,7 @@ from app.Engines.FetchEngine.requests import CONTEXT, endpoint_base, yt_requests
 class next(yt_requests,endpoint_base):
     
     def __call__(self,videoId:str='',continuation:str=''):
-        if videoId=='' and continuation=='':
+        if not videoId and not continuation:
             raise ValueError('Either video_id or continuation must be provided.')
 
         self.PAYLOAD.setUParam(videoId=videoId,continuation=continuation)

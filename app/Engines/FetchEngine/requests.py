@@ -26,15 +26,15 @@ class queryString:
 
 class URL:
     def __init__(self,Endpoint:str) -> None:
-         self.__data= ResourceName.API.value+str(Route(Endpoint))+"?"+urlencode(queryString.basic)
-         
+        self.__data= ResourceName.API.value+str(Route(Endpoint))+"?"+urlencode(queryString.basic)
+
     def __repr__(self) -> str:
         return self.__data
     
 class Header(dict):
     def __init__(self,Auth:Authentication=Authentication()) -> None:
         super().__setitem__('cookie',json.dumps(Auth.cookie))
-   
+
 class PF(Enum):
     EMBED={
         "clientName": "WEB_EMBEDDED_PLAYER",
@@ -96,7 +96,7 @@ class yt_requests:
         
         #Checking if the client data provided is CONTEXT or not
         if not isinstance(client, CONTEXT):
-            raise TypeError(f"client is not of type CONTEXT.")
+            raise TypeError("client is not of type CONTEXT.")
 
         # Setting client if context given
         self.PAYLOAD.setClient(**(client()))
@@ -111,7 +111,7 @@ class yt_requests:
 
     def UpdateContext(self, client:CONTEXT):
         if not isinstance(client, CONTEXT):
-            raise TypeError(f"client is not of type CONTEXT.")
+            raise TypeError("client is not of type CONTEXT.")
         
         # Setting client if context given
         self.PAYLOAD.setClient(**(client()))

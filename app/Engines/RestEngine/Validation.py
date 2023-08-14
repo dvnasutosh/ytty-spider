@@ -2,6 +2,16 @@ from typing import Optional
 from betterdataclass.StrictDictionary import StrictDictionary
     
 class TabRoute(StrictDictionary):
+    """ API call Validation of Tab route of channel
+    
+    Extends: 
+        `StrictDictionary`
+    
+    Args:
+        `params`: str
+        `channelId`: str
+        
+    """ 
     params:str
     channelId:str    
 

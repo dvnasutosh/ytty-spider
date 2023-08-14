@@ -9,16 +9,16 @@ from betterdataclass.StrictDictionary import StrictDictionary
 from ..common import url
 class mimeType(Enum):
 
-    unmuxedAudio='unmuxedAudio'
-    unmuxedVideo='unmuxedVideo'
-    muxedVideo='muxedVideo'
-    undefined='undefined'
-    default='undefined'
+    unmuxedAudio    =   'unmuxedAudio'
+    unmuxedVideo    =   'unmuxedVideo'
+    muxedVideo      =   'muxedVideo'
+    undefined       =   'undefined'
+    default         =   'undefined'
 
 class mimeTypeExt(StrictDictionary):
-    Type:mimeType
-    label:str
-    codec:List[str]
+    Type    :mimeType
+    label   :str
+    codec   :List[str]
 
 class DownloadableMeta(StrictDictionary):
     itag:int
@@ -29,6 +29,7 @@ class DownloadableMeta(StrictDictionary):
     quality:str
     projectionType:str
     approxDurationMs:int
+
 
 class videoMeta(StrictDictionary):
     width:int
@@ -64,17 +65,17 @@ class adaptiveVideo(StrictDictionary):
     adaptiveMeta:adaptiveMeta
 
 class adaptiveAudio(StrictDictionary):
-    Download:DownloadableMeta
-    audioMeta:audioMeta
+    Download: DownloadableMeta
+    audioMeta: audioMeta
     adaptiveMeta:adaptiveMeta
 
 
 class adaptiveList(StrictDictionary):
-    audio:List[adaptiveAudio]
-    video:List[adaptiveVideo]
+    audio: List[adaptiveAudio]
+    video: List[adaptiveVideo]
 
 class Downloadables(StrictDictionary):
-    expiresInSeconds:int
-    since:float
-    muxed:List[streaming]
-    unmuxed:adaptiveList
+    expiresInSeconds: int
+    since: float
+    muxed: List[streaming]
+    unmuxed: adaptiveList

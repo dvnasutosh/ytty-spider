@@ -9,8 +9,6 @@ from betterdataclass.StrictDictionary import StrictDictionary
 from betterdataclass.StrictList import StrictList
 from app.dataclass.common import img,strbool,browseEndpoint
 
-
-    
 class tabEndpoints(StrictDictionary):
     title:str
     selected:strbool
@@ -35,9 +33,6 @@ class Content(StrictDictionary):
 
 class contentList(StrictList): #list
     types= [Content,videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]
-
-    
-    
 
 class tabData(StrictDictionary):
     tabs: List[tabEndpoints]

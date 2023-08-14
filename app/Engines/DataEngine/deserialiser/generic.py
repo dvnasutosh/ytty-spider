@@ -1,3 +1,15 @@
+from app.Engines.DataEngine.deserialiser.channelData import deserialise_Product, deserialise_backstagePostRenderer, deserialise_channelAbout, deserialise_guideEntryRenderer, deserialise_playlistMini, deserialise_videoMini
+from app.dataclass.channelDC.ChannelMeta import browseEndpoint
+from app.dataclass.channelDC.Content import Content, Sort, contentList
+from app.dataclass.channelDC.Shelf import ShelfDetails
+from app.dataclass.common import strbool
+
+
+content_s_indicators=['sectionListRenderer','tabRenderer','itemSectionRenderer','richGridRenderer','richItemRenderer']
+items_indicators=['gridRenderer','horizontalListRenderer','guideSectionRenderer']
+videoMiny_indicators=['channelVideoPlayerRenderer','videoRenderer','gridVideoRenderer','reelItemRenderer']
+playlistMini_indicator=['playlistRenderer','playlistRenderer']
+
 
 def deserialise_contentGeneric(content: dict):
     dataList=contentList()
@@ -14,7 +26,7 @@ def deserialise_contentGeneric(content: dict):
                 for each in value['contents']:
                     data['data'].extend( deserialise_contentGeneric(each))
 
-            #   sorting endpoints deserialisation
+            #   sorting endpoints deserialization
             
             if 'header' in value.keys():
                 for sort in value['header']['feedFilterChipBarRenderer']['contents']:
@@ -30,7 +42,7 @@ def deserialise_contentGeneric(content: dict):
             break
         
         elif key == 'shelfRenderer':
-            shelf=ShelfDetails()
+            shelf = ShelfDetails()
             if 'title' in value.keys():
                 if 'runs' in value['title']:
                     shelf.title=value['title']['runs'][0]['text']
@@ -64,21 +76,21 @@ def deserialise_contentGeneric(content: dict):
                     dataList.extend( deserialise_contentGeneric(each))
             
         elif key=='continuationEndpoint':
-            data.append({'continuation':value['continuationCommand']['token']})
+            dataList.append({'continuation':value['continuationCommand']['token']})
             
         #  deserialise smallest pieces of this youtube puzzle
         elif key in videoMiny_indicators:
-            data.append(deserialise_videoMini(value))
+            dataList.append(deserialise_videoMini(value))
         
         elif key in playlistMini_indicator:
-            data.extend(deserialise_playlistMini(value))
+            dataList.extend(deserialise_playlistMini(value))
         
         elif key == 'channelAboutFullMetadataRenderer':
             #  deserialise channel about
-            data.append(deserialise_channelAbout(value))
+            dataList.append(deserialise_channelAbout(value))
         
         elif key=='verticalProductCardRenderer':
-            data.append(deserialise_Product(value))
+            dataList.append(deserialise_Product(value))
         
         elif key=='backstagePostRenderer':
             dataList.append(deserialise_backstagePostRenderer(value))
@@ -89,4 +101,4 @@ def deserialise_contentGeneric(content: dict):
         else: continue
         break;
     
-    return data
+    return dataList

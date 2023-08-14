@@ -138,18 +138,17 @@ def insert_url(pytubeData:List[dict],structuredData:Downloadables):
             for j in range(len(structuredData.muxed)):
                 if structuredData.muxed[j].Download.itag == int(i['itag']):
                     structuredData.muxed[j].Download.url=url(i['url'])
-            print('donemux')
+        
         elif (mime.Type==mimeType.unmuxedAudio):
             for j in range(len(structuredData.unmuxed.audio)):
                 if structuredData.unmuxed.audio[j].Download.itag == int(i['itag']):
                     structuredData.unmuxed.audio[j].Download.url=url(i['url'])
-            print('doneaunmux')
                     
         elif (mime.Type==mimeType.unmuxedVideo):
             for j in range(len(structuredData.unmuxed.video)):
                 if structuredData.unmuxed.video[j].Download.itag == int(i['itag']):
                     
                     structuredData.unmuxed.video[j].Download.url=url(i['url'])
-            print('doneviunmux')
+
 
     return structuredData

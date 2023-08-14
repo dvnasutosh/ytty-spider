@@ -1,6 +1,6 @@
 
 def selective(**kwargs):
-    data=dict()
+    data = {}
     
 
     

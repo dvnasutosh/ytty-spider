@@ -8,6 +8,7 @@ class img(StrictDictionary):
     width:int
     height:int
 
+
 class dateInt(int):
     
     """
@@ -29,14 +30,15 @@ class dateInt(int):
         - '2023-03-10T14:00:08.999Z'
         - '2023-03-10T14:00:08-07:00'
         - '2023-03-10T14:00:08.999-07:00'
+        - 'Apr 7, 2017'
     """
     date_formats = [
         ('%Y-%m-%d', re.compile(r'\d{4}-\d{2}-\d{2}$')),
         ('%Y-%m-%dT%H:%M:%S.%fZ', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$')),
         ('%Y-%m-%dT%H:%M:%S.%f%z', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+\d{2}:\d{2}$')),
         ('%Y-%m-%dT%H:%M:%SZ', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')),
-        ('%Y-%m-%dT%H:%M:%S%z', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$')),
-        ('%b %d, %Y', re.compile(r'[a-zA-Z]{3} \d{2}, \d{4}$')),
+        ('%Y-%m-%dT%H:%M:%S%z', re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}')),
+        ('%b %d, %Y', re.compile(r'[a-zA-Z]{3} \d{1,2}, \d{4}$')),
     ]
     
     def __new__(cls, date_str=None, default_value=-1):
@@ -60,7 +62,7 @@ class dateInt(int):
                 date_obj = datetime.datetime.strptime(date_str, date_format)
                 timestamp = int(date_obj.timestamp())
                 return super().__new__(cls, timestamp)
-        
+        print(date_str)
         raise ValueError("Invalid date string format")
 
         
@@ -72,6 +74,7 @@ class dateInt(int):
         :return: A datetime object representing the stored date.
         """
         return datetime.datetime.fromtimestamp(self)
+
 
 class publishTime(StrictDictionary):
     publishedTimeText:str
