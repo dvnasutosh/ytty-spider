@@ -7,10 +7,12 @@ from betterdataclass.StrictDictionary import StrictDictionary
 from app.authentication.auth import Authentication  
 
 class ResourceName(Enum):
+
     API:str=r'https://www.youtube.com/'
     # SHint:str=r'https://suggestqueries-clients6.youtube.com/'
 
 class Route:
+    
     route_path=r'youtubei/v1/'
     # SHint=r'complete/'    TODO: Adding a separate pathway for search hinting
     def __init__(self,ROUTE) -> None:
@@ -64,7 +66,7 @@ class Payload(dict):
         self.__setitem__('context',{'client':client()})
     
         self.setClient(**PF.value)
-       
+        
     # Setting UParam If Exists
         self.setUParam(**Uparam)
 

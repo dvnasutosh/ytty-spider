@@ -1,0 +1,3 @@
+[submodule "betterdataclasses"]
+	path = betterdataclasses
+	url = https://github.com/dvnasutosh/betterdataclasses
