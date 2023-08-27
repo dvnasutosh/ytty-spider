@@ -5,8 +5,8 @@ from app.dataclass.channelDC.about import aboutChannel
 from app.dataclass.channelDC.store import Product
 from app.dataclass.playlistDC.Playlist import PlaylistMini
 from app.dataclass.videoDC.videoMini import videoMini
-from betterdataclass.StrictDictionary import StrictDictionary
-from betterdataclass.StrictList import StrictList
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictList import StrictList
 from app.dataclass.common import img,strbool,browseEndpoint
 
 class tabEndpoints(StrictDictionary):
@@ -26,16 +26,29 @@ class Sort(StrictDictionary):
     continuation:str
     isSelected:strbool
     sortType:str
-    
+class dataList(StrictList):
+    types=[videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]
 class Content(StrictDictionary):
-    data: List[Union[videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]]
+    # data: List[Union[videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]]
+    # data: dataList
+    data:List
     sort: Optional[List[Sort]]
+    
+    
 
 class contentList(StrictList): #list
     types= [Content,videoMini, channelMini, ShelfDetails, Product, Post, PlaylistMini, aboutChannel]
 
+# SECTION: Test for List[tabsEndoints] typing type restriction setup being the reason for copy paste list members
+
+class tabEndpointsList(StrictList):
+    types=[tabEndpoints]
+    
+# !SECTION
+
 class tabData(StrictDictionary):
-    tabs: List[tabEndpoints]
+    # tabs: List[tabEndpoints]
+    tabs: tabEndpointsList
     content: contentList
 
 class Channel(StrictDictionary):

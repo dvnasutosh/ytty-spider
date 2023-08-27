@@ -1,7 +1,7 @@
 
 from typing import List, Optional
 from enum import Enum
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 from app.dataclass.common import  img, publishTime, publishTime
 
 class videoMini(StrictDictionary):

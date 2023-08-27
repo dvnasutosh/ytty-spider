@@ -1,4 +1,4 @@
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 from ..common import browseEndpoint
 
 class ShelfDetails(StrictDictionary):

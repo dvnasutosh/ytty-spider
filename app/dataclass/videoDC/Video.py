@@ -3,7 +3,7 @@
 from typing import List
 
 
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 from app.dataclass.common import img,strbool,dateInt
 
 

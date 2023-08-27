@@ -1,8 +1,8 @@
 from typing import Optional
 from app.dataclass.common import img, publishTime,browseEndpoint
 
-from betterdataclass.StrictDictionary import StrictDictionary
-from betterdataclass.StrictList import StrictList
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictList import StrictList
 from app.dataclass.videoDC.videoMini import sort, videoMini
 
 class Choice(StrictDictionary):

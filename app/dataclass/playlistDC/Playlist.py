@@ -1,4 +1,4 @@
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 from app.dataclass.common import img, strbool, browseEndpoint
 class Playlist(StrictDictionary):
     title:str

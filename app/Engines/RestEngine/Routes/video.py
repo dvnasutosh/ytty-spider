@@ -5,7 +5,7 @@ from flask import Blueprint, request
 from app.Engines.RestEngine.Validation import Validate
 from app.dataclass.videoDC.Comments import Comments
 from app.services.videoManager import videoManager
-from betterdataclass.helper.to_dict import to_raw_dict
+from betterdataclasses.betterdataclass.helper.to_dict import to_raw_dict
 
 video_routes=Blueprint("video_routes",__name__)
 

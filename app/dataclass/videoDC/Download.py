@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List
 
 
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 
 from ..common import url
 class mimeType(Enum):

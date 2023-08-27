@@ -3,7 +3,7 @@ import requests
 import json
 from enum import Enum
 
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 from app.authentication.auth import Authentication  
 
 class ResourceName(Enum):

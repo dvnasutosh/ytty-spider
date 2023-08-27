@@ -1,5 +1,5 @@
 from typing import Optional
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
     
 class TabRoute(StrictDictionary):
     """ API call Validation of Tab route of channel

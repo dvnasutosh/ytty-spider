@@ -1,6 +1,6 @@
 
 from app.dataclass.common import img, publishTime, strbool
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 from typing import Dict, Optional, Union,List
 
 

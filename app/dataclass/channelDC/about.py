@@ -1,5 +1,5 @@
 from app.dataclass.common import dateInt
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 
 class aboutChannel(StrictDictionary):
     description:str

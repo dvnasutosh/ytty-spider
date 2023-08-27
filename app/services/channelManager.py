@@ -44,10 +44,11 @@ class channelManager:
         
         browseID=self.channelExists(browseID)
         raw=loads(self.browse(browseId=browseID,params=params).text)
+        print(dumps(raw,indent=4))
         channelDetails=Deserialise.channelDetails(raw)
         channelTabs=Deserialise.channelTabs(raw)
-
+        print('____'*1000)
         return {
-                'channelDetails': channelDetails.__raw__(),
-                'tabData': channelTabs.__raw__()
+                # 'channelDetails': channelDetails,
+                'tabData': channelTabs
             }

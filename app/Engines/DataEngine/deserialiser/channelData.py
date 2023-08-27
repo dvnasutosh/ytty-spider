@@ -146,34 +146,36 @@ playlistMini_indicator  =   ['playlistRenderer','playlistRenderer']
 def deserialise_contentGeneric(content: dict):
     dataList=contentList()
     # if content exists
-    
+    print('Entering ContentList')
     for key,value in content.items():
         if key in content_s_indicators:
             data = Content()
-            
+
             #checking if it has cont or contents
             if 'content' in value.keys():
-                data['data']+= list(deserialise_contentGeneric(value['content']))
-                
+                data['data'].extend(deserialise_contentGeneric(value['content']))
+
             elif 'contents' in value.keys():
                 for each in value['contents']:
-                    data['data']+=list(deserialise_contentGeneric(each))
-            
+                    temp = deserialise_contentGeneric(each)
+                    data['data'].extend(temp)
+                    
             #   sorting endpoints deserialisation
             if 'header' in value and 'feedFilterChipBarRenderer' in value['header']:
                 data.sort=[]
                 for sort in value['header']['feedFilterChipBarRenderer']['contents']:
-                    
+
                     sortBy = Sort()
                     sortBy['continuation'] = sort['chipCloudChipRenderer']['navigationEndpoint']['continuationCommand']['token']
                     sortBy['isSelected'] = strbool(sort['chipCloudChipRenderer']['isSelected'])
                     sortBy['sortType'] = sort['chipCloudChipRenderer']['text']['simpleText']
                     data.sort.append(sortBy)
-                
-            
+
+
             dataList.append(data)
+            del data
             break
-        
+
         elif key == 'shelfRenderer':
             shelf=ShelfDetails()
             if 'title' in value.keys():
@@ -181,61 +183,60 @@ def deserialise_contentGeneric(content: dict):
                     shelf.title=value['title']['runs'][0]['text']
                 if 'simpleText' in value['title']:
                     shelf.title=value['simpleText']
-            
+
             if 'endpoint' in value.keys():
                 shelf.browseEndpoint=browseEndpoint(**value['endpoint']['browseEndpoint'])
             if 'subtitle' in value:
                 shelf.subtitle =value['subtitle']['simpleText']
-            
+
             if 'content' in value.keys():
                 shelf.data+= list(deserialise_contentGeneric(value))
-            
+
             if 'contents' in value.keys():
                 for each in value['contents']:
                     shelf.data += list(deserialise_contentGeneric(each))
-                
+
             dataList.append(shelf)
             break
-        
+
         elif key == 'backstagePostThreadRenderer':
             dataList.extend(deserialise_contentGeneric(value['post']))
-        
+
         elif key in items_indicators:
             if 'items' in value.keys():
                 for each in value['items']:
                     dataList.extend( deserialise_contentGeneric(each))
-        
+
         elif key=='items':
                 for each in value['items']:
                     dataList.extend( deserialise_contentGeneric(each))
-            
+
         elif key=='continuationEndpoint':
             dataList.append({'continuation':value['continuationCommand']['token']})
-            
-        #  deserialise smallest pieces of this youtube puzzle
+
         elif key in videoMiny_indicators:
             dataList.append(deserialise_videoMini(value))
-        
+
         if key == 'playlistRenderer':
             print("Playlist Found")
             dataList.append(deserialise_playlistMini(value))
-        
+
         elif key == 'channelAboutFullMetadataRenderer':
             #  deserialise channel about
             dataList.append(deserialise_channelAbout(value))
-        
+
         elif key=='verticalProductCardRenderer':
             dataList.append(deserialise_Product(value))
-        
+
         elif key=='backstagePostRenderer':
             dataList.append(deserialise_backstagePostRenderer(value))
-        
+
         elif key=='guideEntryRenderer':
             dataList.append(deserialise_guideEntryRenderer(value))
-        
+
         else: continue
-        break;
-    
+        break
+
     return dataList
 
 def deserialise_Tabs(raw:dict):

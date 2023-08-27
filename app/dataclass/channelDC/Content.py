@@ -6,7 +6,7 @@ from app.dataclass.channelDC.about import aboutChannel
 from app.dataclass.channelDC.store import Product
 from app.dataclass.playlistDC.Playlist import PlaylistMini
 from app.dataclass.videoDC.videoMini import videoMini
-from betterdataclass.StrictDictionary import StrictDictionary 
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary 
 
 from enum import Enum
 

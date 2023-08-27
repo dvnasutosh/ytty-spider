@@ -1,6 +1,6 @@
 import datetime
 from urllib.parse import parse_qsl, urlparse
-from betterdataclass.StrictDictionary import StrictDictionary
+from betterdataclasses.betterdataclass.StrictDictionary import StrictDictionary
 import re
 
 class img(StrictDictionary):
