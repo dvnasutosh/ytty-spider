@@ -1,8 +1,10 @@
+import typing
 from app.Engines.DataEngine.deserialiser.channelData import deserialise_Product, deserialise_backstagePostRenderer, deserialise_channelAbout, deserialise_guideEntryRenderer, deserialise_playlistMini, deserialise_videoMini
 from app.dataclass.channelDC.ChannelMeta import browseEndpoint
 from app.dataclass.channelDC.Content import Content, Sort, contentList
 from app.dataclass.channelDC.Shelf import ShelfDetails
 from app.dataclass.common import strbool
+from betterdataclass import StrictDictionary
 
 
 content_s_indicators=['sectionListRenderer','tabRenderer','itemSectionRenderer','richGridRenderer','richItemRenderer']
@@ -102,3 +104,51 @@ def deserialise_contentGeneric(content: dict):
         break;
     
     return dataList
+
+
+
+
+
+class deserializerTool(StrictDictionary):
+    deserializer:typing.Callable
+    keyList:typing.List[str]
+    
+def Udeserializer(content:dict,deserializer:typing.List[deserializerTool]):
+    out={}
+    def extractor_recursion(contentI:dict,deserializerI:typing.List[deserializerTool]):
+        for k,v in contentI.items():
+            for targets in deserializerI:
+                if k in targets.keyList:
+                    out[k]=targets.deserializer(v)
+                    
+
+def generic(raw,endNode):
+    pass
+
+
+
+
+def key_extractor(data:dict,**kv):
+    
+    out={}
+    
+    
+    def extractor_recursion(data2:dict,**kv2):
+        '''
+        This is the recursion function.
+            
+        '''
+        for k,v in data2.items():
+            if k in kv2:
+                out[k]=v
+            elif isinstance(v,dict):
+                return extractor_recursion(data2=data2,**kv2)
+            elif isinstance(v,(list,set,tuple)):
+                for item in v:
+                    temp=extractor_recursion(data2=item,**kv2)
+                    if temp:
+                        out[k]=temp
+    
+    extractor_recursion(data2=data,kv2=kv)
+    return out
+

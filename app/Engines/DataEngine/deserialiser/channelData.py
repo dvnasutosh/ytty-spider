@@ -1,15 +1,17 @@
 
 from typing import List
-from app.dataclass.channelDC.ChannelMeta import (Sort, Channel, channelMini, contentList,
-    tabData, tabEndpoints,Content)
+from app.dataclass.channelDC.ChannelMeta import (Sort, Channel, channelMini, contentList, tabData, tabEndpoints,Content)
 from app.dataclass.channelDC.about import aboutChannel
+
 from app.dataclass.common import dateInt, img, strbool, url,browseEndpoint
 from app.Engines.DataEngine.helper import convert_to_number, filterInt
 from app.dataclass.playlistDC.Playlist import Playlist, PlaylistMini
 
 from app.dataclass.videoDC.videoMini import channelVideos, sort, videoMini
 from app.helper.time_to_seconds import t2sec
+
 import time
+
 from app.dataclass.channelDC.Shelf import ShelfDetails
 
 from app.dataclass.channelDC.store import Product
@@ -31,6 +33,7 @@ def deserialise_playlistDetails(raw:dict):
     playlistData['videosCount']=filterInt(header['numVideosText']['runs'][0]['text'])
     playlistData['ownerEndpoint']=browseEndpoint(**header['ownerEndpoint']['browseEndpoint'])
     playlistData['playlistHeaderBanner']=img(**header['playlistHeaderBanner']['heroPlaylistThumbnailRenderer']['thumbnail']['thumbnails'][-1])
+    
     if header['descriptionText']:
         playlistData['description']=header['descriptionText']['simpleText']
     
@@ -205,11 +208,11 @@ def deserialise_contentGeneric(content: dict):
         elif key in items_indicators:
             if 'items' in value.keys():
                 for each in value['items']:
-                    dataList.extend( deserialise_contentGeneric(each))
+                    dataList.extend(    deserialise_contentGeneric(each)   )
 
         elif key=='items':
                 for each in value['items']:
-                    dataList.extend( deserialise_contentGeneric(each))
+                    dataList.extend(    deserialise_contentGeneric(each)    )
 
         elif key=='continuationEndpoint':
             dataList.append({'continuation':value['continuationCommand']['token']})
